@@ -133,7 +133,7 @@ up echo nameserver 192.168.122.1 > /etc/resolv.conf
 
 ## Soal 2
 
-Node Eonwe
+- Jlakan script dibawah di Node Eonwe
 ```
 echo 1 > /proc/sys/net/ipv4/ip_forward
 apt update
@@ -147,6 +147,16 @@ apt install -y iptables
 ping -c 5 google.com # Tes Internet
 ```
 ## Soal 3
+
+- Sebelum melakukan tes koneksi antar client barta dan timur jalanin script dibawah ini di bagian Node
+```
+iptables -A FORWARD -i eth1 -o eth2 -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth1 -j ACCEPT
+iptables -A FORWARD -i eth1 -o eth3 -j ACCEPT
+iptables -A FORWARD -i eth3 -o eth1 -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth3 -j ACCEPT
+iptables -A FORWARD -i eth3 -o eth2 -j ACCEPT
+```
 
 ## Soal 4
 
