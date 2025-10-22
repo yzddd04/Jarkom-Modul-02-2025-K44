@@ -242,12 +242,12 @@ dig @localhost k44.com
 
 **Valmar**
 
-```sh
+```
 apt update
 apt install bind9 -y
 ln -s /etc/init.d/named /etc/init.d/bind9
 ```
-
+![alt text](assets/soal4/image8.png)
 ```
 cat <<EOF > /etc/bind/named.conf.options
 options {
@@ -265,8 +265,8 @@ options {
 
 EOF
 ```
-
-```sh
+![alt text](assets/soal4/image9.png)
+```
 mkdir -p /var/lib/bind/k44 && chown bind:bind /var/lib/bind/k44 && cat <<EOF > /etc/bind/named.conf.local
 zone "k44.com" {
   type slave;
@@ -276,28 +276,30 @@ zone "k44.com" {
 
 EOF
 ```
+![alt text](assets/soal4/image10.png)
 
-
-```sh
+```
 service bind9 restart
 ```
+![alt text](assets/soal4/image11.png)
 
 
 
 
 **All node**
 
-```sh
+```
 echo "nameserver 192.233.3.3" > /etc/resolv.conf
 echo "nameserver 192.233.3.4" >> /etc/resolv.conf
 echo "nameserver 192.168.122.1" >> /etc/resolv.conf
 ```
+![alt text](assets/soal4/image12.png)
+
+5. “Nama memberi arah,” kata Eonwe. Namai semua tokoh (hostname) sesuai glosarium, eonwe, earendil, elwing, cirdan, elrond, maglor, sirion, tirion, valmar, lindon, vingilot, dan verifikasi bahwa setiap host mengenali dan menggunakan hostname tersebut secara system-wide. Buat setiap domain untuk masing masing node sesuai dengan namanya (contoh: eru.<xxxx>.com) dan assign IP masing-masing juga. Lakukan pengecualian untuk node yang bertanggung jawab atas ns1 dan ns2
 
 
-5. "Nama memberi arah," kata Eonwe, menandai dimulainya era identitas yang jelas dan terstruktur di seluruh Beleriand. Setiap tokoh dalam jaringan ini harus memiliki hostname yang unik dan bermakna sesuai dengan glosarium yang telah ditetapkan: eonwe, earendil, elwing, cirdan, elrond, maglor, sirion, tirion, valmar, lindon, dan vingilot. Implementasi hostname ini memungkinkan setiap host untuk dikenali dan diakses dengan mudah melalui nama yang bermakna, bukan hanya alamat IP numerik yang sulit diingat. Selain itu, setiap node harus memiliki domain yang sesuai dengan namanya (contoh: eru.\<xxxx>.com) dan alamat IP yang telah ditetapkan sebelumnya. Pengecualian khusus dilakukan untuk node yang bertanggung jawab atas ns1 dan ns2, mengingat peran penting mereka dalam infrastruktur DNS yang telah dibangun.
 
-
-```sh
+```
 cat <<EOF >> /etc/bind/k44/k44.com
 earendil       IN       A      192.233.1.2
 elwing         IN       A      192.233.1.3
@@ -310,33 +312,39 @@ vingilot       IN       A      192.233.3.6
 
 EOF
 ```
+![alt text](assets/soal5/image.png)
 
-
-```sh
+```
 service bind9 restart
 ```
+![alt text](assets/soal5/image2.png)
 
+6. Lonceng Valmar berdentang mengikuti irama Tirion. Pastikan zone transfer berjalan, Pastikan Valmar (ns2) telah menerima salinan zona terbaru dari Tirion (ns1). Nilai serial SOA di keduanya harus sama
 
-6. Lonceng Valmar berdentang mengikuti irama Tirion, menandai dimulainya era sinkronisasi DNS yang harmonis dan terpercaya di seluruh Beleriand. Proses zone transfer yang efektif memastikan bahwa Valmar (ns2) sebagai server slave dapat menerima salinan zona terbaru dari Tirion (ns1) sebagai server master secara otomatis dan real-time. Sinkronisasi ini sangat penting untuk memastikan konsistensi data DNS di seluruh jaringan, sehingga setiap perubahan yang dilakukan di server master akan segera direfleksikan di server slave. Nilai serial SOA di kedua server harus selalu sama, menandakan bahwa transfer telah berhasil dan tidak ada data yang tertinggal atau tidak sinkron.
 
 
 **Tirion**
 
-```sh
+```
 dig @192.233.3.3 k44.com SOA +short
 ```
+![alt text](assets/soal6/image.png)
 
 **Valmar**
 
-```sh
+```
 dig @192.233.3.4 k44.com SOA +short
 ```
+![alt text](assets/soal6/image2.png)
+
+7. Peta kota dan pelabuhan dilukis. Sirion sebagai gerbang, Lindon sebagai web statis, Vingilot sebagai web dinamis. Tambahkan pada zona <xxxx>.com A record untuk sirion.<xxxx>.com (IP Sirion), lindon.<xxxx>.com (IP Lindon), dan vingilot.<xxxx>.com (IP Vingilot). Tetapkan CNAME :
+www.<xxxx>.com → sirion.<xxxx>.com, 
+static.<xxxx>.com → lindon.<xxxx>.com, dan 
+app.<xxxx>.com → vingilot.<xxxx>.com. 
+Verifikasi dari dua klien berbeda bahwa seluruh hostname tersebut ter-resolve ke tujuan yang benar dan konsisten.
 
 
-7. Peta kota dan pelabuhan dilukis dengan cermat, menandai dimulainya era infrastruktur web yang terintegrasi dan fungsional di seluruh Beleriand. Sirion berperan sebagai gerbang utama (front door) yang akan menerima semua permintaan masuk, sementara Lindon dikonfigurasi sebagai server web statis yang akan melayani konten statis seperti file HTML, CSS, dan gambar. Vingilot, di sisi lain, berfungsi sebagai server web dinamis yang dapat mengeksekusi skrip PHP dan aplikasi web yang kompleks. Pada zona <xxxx>.com, ditambahkan A records untuk sirion.<xxxx>.com (IP Sirion), lindon.<xxxx>.com (IP Lindon), dan vingilot.<xxxx>.com (IP Vingilot) untuk memastikan resolusi yang tepat. Selain itu, ditetapkan CNAME records yang strategis: www.<xxxx>.com → sirion.<xxxx>.com untuk akses utama, static.<xxxx>.com → lindon.<xxxx>.com untuk konten statis, dan app.<xxxx>.com → vingilot.<xxxx>.com untuk aplikasi dinamis. Verifikasi dilakukan dari dua klien berbeda untuk memastikan bahwa seluruh hostname tersebut ter-resolve ke tujuan yang benar dan konsisten di seluruh jaringan.
-
-
-```sh
+```
 cat <<EOF >> /etc/bind/k44/k44.com
 www       IN       CNAME      sirion.k44.com.
 static    IN       CNAME      lindon.k44.com.
@@ -344,20 +352,21 @@ app       IN       CNAME      elrond.k44.com.
 
 EOF
 ```
+![alt text](assets/soal7/image.png)
 
-
-```sh
+```
 service bind9 restart
 ```
+![alt text](assets/soal7/image-1.png)
 
+8. Setiap jejak harus bisa diikuti. Di Tirion (ns1) deklarasikan satu reverse zone untuk segmen DMZ tempat Sirion, Lindon, Vingilot berada. Di Valmar (ns2) tarik reverse zone tersebut sebagai slave, isi PTR untuk ketiga hostname itu agar pencarian balik IP address mengembalikan hostname yang benar, lalu pastikan query reverse untuk alamat Sirion, Lindon, Vingilot dijawab authoritative.
 
-8. Setiap jejak harus bisa diikuti, menandai dimulainya era reverse DNS yang komprehensif dan terstruktur di seluruh Beleriand. Di Tirion (ns1), dideklarasikan satu reverse zone khusus untuk segmen DMZ tempat Sirion, Lindon, dan Vingilot berada, memungkinkan pencarian balik dari alamat IP ke hostname yang sesuai. Di Valmar (ns2), reverse zone tersebut ditarik sebagai slave untuk memastikan redundansi dan ketersediaan yang tinggi. PTR records diisi untuk ketiga hostname tersebut agar pencarian balik IP address dapat mengembalikan hostname yang benar dan akurat. Implementasi ini memastikan bahwa query reverse untuk alamat Sirion, Lindon, dan Vingilot dijawab secara authoritative, memberikan kemampuan pelacakan dan identifikasi yang lengkap untuk setiap perangkat dalam jaringan.
 
 
 #### **Konfigurasi di Tirion (Master)**
 
 
-```sh
+```
 cat <<EOF >> /etc/bind/named.conf.local
 zone "3.233.192.in-addr.arpa" {
     type master;
@@ -366,9 +375,9 @@ zone "3.233.192.in-addr.arpa" {
 };
 EOF
 ```
+![alt text](assets/soal8/image.png)
 
-
-```sh
+```
 cat <<EOF > /etc/bind/k44/3.233.192.in-addr.arpa
 \$TTL    604800
 @       IN      SOA     ns1.k44.com. root.k44.com. (
@@ -386,11 +395,12 @@ cat <<EOF > /etc/bind/k44/3.233.192.in-addr.arpa
 6       IN       PTR    vingilot.k44.com.
 EOF
 ```
+![alt text](assets/soal8/image-1.png)
 
 #### **Konfigurasi di Valmar (Slave)**
 
 
-```sh
+```
 cat <<EOF >> /etc/bind/named.conf.local
 zone "3.233.192.in-addr.arpa" {
   type slave;
@@ -399,47 +409,40 @@ zone "3.233.192.in-addr.arpa" {
 };
 EOF
 ```
-
+![alt text](assets/soal8/image-2.png)
 #### **Verifikasi**
 
 
-```sh
+```
 host -t ptr 192.233.3.2
 host -t ptr 192.233.3.5
 host -t ptr 192.233.3.6
 ```
-Hasil verifikasi menunjukkan bahwa setiap alamat IP berhasil dipetakan kembali ke *hostname* yang sesuai, menandakan konfigurasi *Reverse DNS* telah berhasil.
+
+![alt text](assets/soal8/image-3.png)
+Alamat IP berhasil dipetakan  ke *hostname* yang sesuai.
 
 
-
-
-9. Lampion Lindon dinyalakan, menandai dimulainya era layanan web statis yang terstruktur dan mudah diakses di seluruh Beleriand. Implementasi web server statis pada hostname static.\<xxxx>.com memungkinkan pengguna untuk mengakses konten web dengan mudah melalui nama domain yang bermakna, bukan hanya alamat IP numerik yang sulit diingat. Folder arsip /annals/ dikonfigurasi dengan fitur autoindex (directory listing) yang memungkinkan pengguna untuk menelusuri isi direktori secara interaktif dan intuitif, seolah-olah mereka sedang menjelajahi sistem file lokal. Akses ke layanan ini harus dilakukan melalui hostname untuk memastikan konsistensi dan kemudahan penggunaan di seluruh jaringan.
-
-
-Tentu, mari kita lanjutkan ke soal 9. Berikut adalah format laporan untuk `README.md` di GitHub, lengkap dengan penjelasan validasinya.
-
---
-
-### 9\. Lampion Lindon Dinyalakan (Web Server Statis)
-
-Pada soal ini, kami bertugas untuk mengaktifkan **Lindon** sebagai *web server* statis. Sesuai permintaan, *server* ini harus menyajikan konten dari direktori `/annals/` dengan fitur *autoindex* (daftar file) aktif. Akses ke *server* ini dilakukan melalui *hostname* `static.k44.com`.
+---
+9. Lampion Lindon dinyalakan. Jalankan web statis pada hostname static.<xxxx>.com dan buka folder arsip /annals/ dengan autoindex (directory listing) sehingga isinya dapat ditelusuri. Akses harus dilakukan melalui hostname, bukan IP.
+---
 
 #### **Konfigurasi di Lindon**
 
 
-```sh
+```
 apt update
 apt install apache2 -y
 ```
+![alt text](image.png)
 
-
-```sh
+```
 mkdir -p /var/www/annals/
 ```
+![alt text](image-1.png)
 
 
-
-```sh
+```
 cat <<EOF > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
     ServerAdmin webmaster@lindon.k44.com
@@ -455,38 +458,41 @@ cat <<EOF > /etc/apache2/sites-available/000-default.conf
 </VirtualHost>
 EOF
 ```
+![alt text](image-2.png)
 
-Terakhir, kami me-restart layanan Apache2 untuk menerapkan semua perubahan konfigurasi.
+Restart layanan Apache2 untuk mengecek semua perubahan.
 
-```sh
+```
 service apache2 restart
 ```
-
+![alt text](image-3.png)
 #### **Validasi**
 
 
 
-```sh
+```
 curl static.k44.com
 ```
+![alt text](image-4.png)
 
+---
+10. Vingilot mengisahkan cerita dinamis. Jalankan web dinamis (PHP-FPM) pada hostname app.<xxxx>.com dengan beranda dan halaman about, serta terapkan rewrite sehingga /about berfungsi tanpa akhiran .php. Akses harus dilakukan melalui hostname.
 
-10. Vingilot mengisahkan cerita dinamis, menandai dimulainya era aplikasi web yang interaktif dan responsif di seluruh Beleriand. Implementasi web dinamis menggunakan PHP-FPM pada hostname app.\<xxxx>.com memungkinkan pengembangan aplikasi web yang kompleks dan dinamis, dengan kemampuan untuk mengeksekusi skrip PHP secara efisien dan aman. Aplikasi ini dilengkapi dengan beranda yang menarik dan halaman about yang informatif, memberikan pengalaman pengguna yang lengkap dan profesional. Fitur URL rewrite diterapkan sehingga pengguna dapat mengakses /about tanpa perlu mengetik akhiran .php, menciptakan URL yang lebih bersih dan user-friendly. Akses ke layanan ini harus dilakukan melalui hostname untuk memastikan konsistensi dan kemudahan penggunaan di seluruh jaringan.
+---
 
-
---
 
 #### **Konfigurasi di Vingilot**
 
-Langkah pertama adalah menginstal paket-paket yang diperlukan, yaitu Apache2, PHP, dan modul-modul terkait.
+Install package yang diperlukan
 
-```sh
+```
 apt install apache2 php php8.4-fpm libapache2-mod-fcgid -y
 ```
+![alt text](image.png)
 
 Selanjutnya, kami mengkonfigurasi *Virtual Host* Apache untuk meneruskan permintaan file `.php` ke *service* PHP-FPM melalui *socket*.
 
-```sh
+```
 cat <<EOF > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
     ServerAdmin webmaster@vingilot.k44.com
@@ -500,72 +506,60 @@ cat <<EOF > /etc/apache2/sites-available/000-default.conf
 </VirtualHost>
 EOF
 ```
+![alt text](image-2.png)
 
 Untuk mengaktifkan URL *rewrite* (misalnya `/about` menjadi `about.php`), kami membuat file `.htaccess` di direktori web.
 
-```sh
+```
 cat <<EOF > /var/www/html/.htaccess
 RewriteEngine On
 RewriteRule ^about$ about.php [L]
 EOF
 ```
+![alt text](image_soal_10.png)
 
-Kami juga membuat dua file PHP sederhana, `index.php` dan `about.php`, sebagai konten untuk validasi. Terakhir, kami mengaktifkan modul Apache yang diperlukan dan me-restart layanan PHP-FPM serta Apache2.
 
---
 
 #### **Validasi**
 
-Untuk membuktikan bahwa *web server* dinamis di Vingilot berfungsi dengan benar, kami melakukan validasi dari klien **Earendil** menggunakan `curl`.
-
-**Cara Validasi:**
 
 1.  **Mengakses Halaman Utama:** Perintah ini untuk memverifikasi eksekusi PHP dasar.
 
-    ```sh
+    ```
     curl http://app.k44.com/
     ```
-
-    **Hasil:** Server berhasil merespons dengan output dari `index.php`, yaitu `Hello Vingilot`.
 
 
 2.  **Mengakses Halaman dengan URL Rewrite:** Perintah ini untuk memverifikasi bahwa aturan di `.htaccess` berfungsi.
 
-    ```sh
+    ```
     curl http://app.k44.com/about
     ```
 
-    **Hasil:** Server berhasil merespons dengan output dari `about.php`, yaitu `About Vingilot`.
-
-
-
-11. Di muara sungai, Sirion berdiri sebagai reverse proxy yang kuat dan terpercaya, menandai dimulainya era load balancing dan routing yang cerdas di seluruh Beleriand. Implementasi path-based routing memungkinkan Sirion untuk secara otomatis mengarahkan permintaan /static ke server Lindon yang mengkhususkan diri pada konten statis, sementara permintaan /app diarahkan ke server Vingilot yang mengkhususkan diri pada aplikasi dinamis. Proses ini dilakukan sambil meneruskan header Host dan X-Real-IP ke backend untuk memastikan bahwa server backend dapat mengidentifikasi klien asli dan memberikan respons yang sesuai. Sirion dikonfigurasi untuk menerima permintaan dari www.<xxxx>.com (hostname kanonik) dan sirion.<xxxx>.com, memastikan fleksibilitas akses yang tinggi. Implementasi ini memastikan bahwa konten pada /static dan /app di-serve melalui backend yang tepat, memberikan pengalaman pengguna yang optimal dan efisien.
-
-
-Pada soal ini, kami mengkonfigurasi **Sirion** untuk berfungsi sebagai **Reverse Proxy**. Tujuannya adalah agar Sirion menjadi satu-satunya pintu gerbang (`front door`) untuk semua layanan web. Klien dari luar hanya perlu tahu alamat Sirion (`www.k44.com`), dan Sirion yang akan secara cerdas meneruskan permintaan tersebut ke server yang benar di belakangnya (Lindon atau Vingilot) berdasarkan *path* URL yang diminta.
-
---
+---
+11. Di muara sungai, Sirion berdiri sebagai reverse proxy. Terapkan path-based routing: /static → Lindon dan /app → Vingilot, sambil meneruskan header Host dan X-Real-IP ke backend. Pastikan Sirion menerima www.<xxxx>.com (kanonik) dan sirion.<xxxx>.com, dan bahwa konten pada /static dan /app di-serve melalui backend yang tepat.
+---
 
 #### **Konfigurasi di Sirion**
 
-Langkah pertama adalah menginstal **Nginx**, perangkat lunak yang akan kami gunakan sebagai *reverse proxy*.
+Install Nginx
 
 ```sh
 apt update
 apt install nginx -y
 ```
+![alt text](assets/soal11/image.png)
 
 Selanjutnya, kami membuat file konfigurasi *server block* utama untuk Nginx. Konfigurasi ini melakukan beberapa hal penting:
 
-  * **`listen 80`**: Mendengarkan permintaan masuk pada port 80.
-  * **`server_name www.k44.com sirion.k44.com`**: Merespons permintaan yang ditujukan untuk kedua nama domain ini.
-  * **`proxy_set_header`**: Meneruskan *header* penting seperti `Host` dan IP asli klien (`X-Real-IP`) ke server *backend*. Ini penting agar server *backend* tahu siapa klien yang sebenarnya.
-  * **`location /static/`**: Ini adalah aturan *path-based routing*. Setiap permintaan yang URL-nya diawali dengan `/static/` akan diteruskan (`proxy_pass`) ke server Lindon (`http://lindon.k44.com/`).
-  * **`location /app/`**: Demikian pula, setiap permintaan yang URL-nya diawali dengan `/app/` akan diteruskan ke server Vingilot (`http://vingilot.k44.com/`).
+  * `listen 80`: Mendengarkan permintaan masuk pada port 80.
+  * `server_name www.k44.com sirion.k44.com`: Merespons permintaan yang ditujukan untuk kedua nama domain ini.
+  * `proxy_set_header`: Meneruskan *header* penting seperti `Host` dan IP asli klien (`X-Real-IP`) ke server *backend*. Ini penting agar server *backend* tahu siapa klien yang sebenarnya.
+  * `location /static/`: Ini adalah aturan *path-based routing*. Setiap permintaan yang URL-nya diawali dengan `/static/` akan diteruskan (`proxy_pass`) ke server Lindon (`http://lindon.k44.com/`).
+  * `location /app/`: Demikian pula, setiap permintaan yang URL-nya diawali dengan `/app/` akan diteruskan ke server Vingilot (`http://vingilot.k44.com/`).
 
-<!-- end list -->
 
-```sh
+```
 cat <<EOF > /etc/nginx/sites-available/default
 server {
     listen 80;
@@ -591,70 +585,61 @@ server {
 }
 EOF
 ```
+![alt text](assets/soal11/image-1.png)
 
-Terakhir, kami me-restart layanan Nginx untuk menerapkan konfigurasi baru.
+restart nginx
 
 ```sh
 service nginx restart
 ```
 
---
 
 #### **Validasi**
 
-Untuk membuktikan bahwa *reverse proxy* berfungsi dengan benar, kami melakukan validasi dari klien **Earendil** dengan `curl`. Kami menguji kedua *path* untuk memastikan permintaan diteruskan ke *backend* yang benar.
 
-**Cara Validasi:**
-
-1.  **Mengakses Path Statis (`/static/`):**
+1.  Mengakses Path Statis (`/static/`):
     Kami mengirim permintaan ke `www.k44.com/static/`. Sirion seharusnya meneruskan ini ke Lindon.
 
     ```sh
     curl http://www.k44.com/static/
     ```
 
-    **Hasil yang Diharapkan:** *Output*-nya harus berupa halaman HTML *directory listing* dari Apache di **Lindon**. Ini membuktikan bahwa *path-based routing* untuk layanan statis berhasil.
-
-2.  **Mengakses Path Dinamis (`/app/`):**
+2.  Mengakses Path Dinamis (`/app/`):
     Kami mengirim permintaan ke `www.k44.com/app/`. Sirion seharusnya meneruskan ini ke Vingilot.
 
-    ```sh
+    ```
     curl http://www.k44.com/app/
     ```
+![alt text](assets/soal11/image.png)
 
-    **Hasil yang Diharapkan:** *Output*-nya harus berupa teks `Hello Vingilot` yang dihasilkan oleh skrip PHP di **Vingilot**. Ini membuktikan bahwa *path-based routing* untuk layanan dinamis juga berhasil.
-
-
-
-12. Ada kamar kecil di balik gerbang yakni /admin, menandai dimulainya era keamanan dan kontrol akses yang ketat di seluruh Beleriand. Implementasi Basic Authentication pada path /admin di Sirion memungkinkan pengelolaan akses yang granular dan terpusat, memastikan bahwa hanya pengguna yang memiliki kredensial yang valid yang dapat mengakses area administratif yang sensitif. Sistem ini dirancang untuk menolak akses tanpa kredensial dengan tegas, memberikan lapisan keamanan tambahan yang melindungi informasi dan fungsi-fungsi administratif dari akses yang tidak sah. Di sisi lain, pengguna dengan kredensial yang benar akan diberikan akses penuh ke area tersebut, memungkinkan mereka untuk melakukan tugas-tugas administratif yang diperlukan dengan aman dan efisien.
+  
 
 
-Pada soal ini, kami diminta untuk mengamankan sebuah *path* atau direktori khusus, yaitu `/admin/`, pada *reverse proxy* **Sirion**. Tujuannya adalah agar hanya pengguna yang memiliki kredensial (nama pengguna dan kata sandi) yang benar yang dapat mengakses konten di dalamnya. Kami mengimplementasikan ini menggunakan fitur **Basic Authentication** dari Nginx.
+---
+12. Ada kamar kecil di balik gerbang yakni /admin. Lindungi path tersebut di Sirion menggunakan Basic Auth, akses tanpa kredensial harus ditolak dan akses dengan kredensial yang benar harus diizinkan.
+---
 
---
 
 #### **Konfigurasi di Sirion**
 
-Langkah pertama adalah menginstal paket `apache2-utils`, yang berisi utilitas `htpasswd` untuk membuat file kata sandi.
-
-```sh
+```
 apt install apache2-utils -y
 ```
+![alt text](assets/soal12/image_soal12.png)
 
-Selanjutnya, kami menggunakan `htpasswd` untuk membuat file kata sandi di `/etc/nginx/.htpasswd`. Perintah ini membuat pengguna baru bernama `sirion` dengan kata sandi `sirion123`.
+Kemudian menggunakan `htpasswd` untuk membuat file kata sandi di `/etc/nginx/.htpasswd`. Kata sandi `sirion123`.
 
-```sh
+```
 htpasswd -cb /etc/nginx/.htpasswd sirion sirion123
 ```
-
-Kemudian, kami memperbarui file konfigurasi Nginx di Sirion dengan menambahkan *location block* baru untuk `^~ /admin/`. Blok ini berisi dua arahan penting:
+![alt text](assets/soal12/image_soal_12_2.png)
+Kemudian, kami memperbarui file konfigurasi Nginx
 
   * `auth_basic`: Menampilkan pesan "Sirion Restricted Area" pada kotak *login*.
   * `auth_basic_user_file`: Menunjuk ke file `/etc/nginx/.htpasswd` sebagai sumber kredensial yang valid.
 
-<!-- end list -->
 
-```sh
+```
 cat <<EOF > /etc/nginx/sites-available/default
 server {
     listen 80;
@@ -671,27 +656,27 @@ server {
 }
 EOF
 ```
+![alt text](assets/soal12/image_soal_12_3.png)
 
-Kami juga membuat direktori dan file `index.html` sederhana yang akan disajikan setelah otentikasi berhasil.
+Membuat direktori dan file `index.html` sederhana.
 
-```sh
+```
 mkdir -p /var/www/admin
 echo "Sirion Admin GG" > /var/www/admin/index.html
 ```
+![alt text](assets/soal12/image_soal_12_4.png)
 
-Terakhir, kami me-restart layanan Nginx untuk menerapkan perubahan.
+Restart Nginx.
 
-```sh
+```
 service nginx restart
 ```
-
+![alt text](assets/soal12/image_soal12_5.png)
 --
 
 #### **Validasi**
 
-Untuk membuktikan bahwa *Basic Authentication* berfungsi, kami melakukan dua skenario pengujian dari klien **Earendil** menggunakan `curl`.
 
-**Cara Validasi:**
 
 1.  **Mengakses Tanpa Kredensial (Harus Gagal):**
     Kami mencoba mengakses *path* `/admin/` tanpa memberikan nama pengguna atau kata sandi.
@@ -700,28 +685,20 @@ Untuk membuktikan bahwa *Basic Authentication* berfungsi, kami melakukan dua ske
     curl -I http://www.k44.com/admin/
     ```
 
-    (Opsi `-I` digunakan untuk hanya melihat *header* respons dari server).
-    **Hasil yang Diharapkan:** Server harus merespons dengan kode status `401 Unauthorized`. Ini membuktikan bahwa direktori tersebut memang dilindungi dan akses ditolak.
-
 2.  **Mengakses Dengan Kredensial yang Benar (Harus Berhasil):**
     Kami mencoba lagi, kali ini dengan menyertakan kredensial yang benar (`sirion:sirion123`) menggunakan opsi `--user`.
 
-    ```sh
+    ```
     curl --user sirion:sirion123 http://www.k44.com/admin/
     ```
 
-    **Hasil yang Diharapkan:** Server berhasil mengotentikasi pengguna dan menyajikan konten dari file `index.html`, yaitu `Sirion Admin GG`. Ini membuktikan bahwa pengguna dengan kredensial yang benar dapat mengakses area yang dilindungi.
+ 
 
 
+---
+13. “Panggil aku dengan nama,” ujar Sirion kepada mereka yang datang hanya menyebut angka. Kanonisasikan endpoint, akses melalui IP address Sirion maupun sirion.<xxxx>.com harus redirect 301 ke www.<xxxx>.com sebagai hostname kanonik.
+---
 
-13. "Panggil aku dengan nama," ujar Sirion kepada mereka yang datang hanya menyebut angka, menandai dimulainya era kanonikalisasi URL yang konsisten dan profesional di seluruh Beleriand. Implementasi kanonikalisasi endpoint memastikan bahwa semua akses ke layanan web dilakukan melalui hostname yang standar dan mudah diingat, bukan melalui alamat IP numerik yang sulit diingat dan tidak user-friendly. Setiap permintaan yang masuk melalui IP address Sirion maupun sirion.<xxxx>.com akan secara otomatis diarahkan (redirect 301) ke www.<xxxx>.com sebagai hostname kanonik yang telah ditetapkan. Proses ini memastikan konsistensi branding, meningkatkan SEO, dan memberikan pengalaman pengguna yang lebih baik dengan URL yang bersih dan profesional.
-
-
-Pada soal ini, kami menerapkan **kanonikalisasi**, sebuah proses untuk memastikan bahwa sebuah situs web hanya dapat diakses melalui satu alamat utama atau "kanonik". Tujuannya adalah untuk menghindari duplikasi konten di mata mesin pencari dan memberikan pengalaman yang konsisten kepada pengguna.
-
-Kami mengkonfigurasi **Sirion** agar setiap permintaan yang masuk menggunakan alamat IP-nya (`192.233.3.2`) akan secara otomatis dialihkan secara permanen (redirect 301) ke nama domain kanonik, yaitu `http://www.k44.com`.
-
---
 
 #### **Konfigurasi di Sirion**
 
@@ -768,10 +745,9 @@ Jika konfigurasi berhasil, server tidak akan menampilkan konten halaman. Sebalik
   * **`Location: http://www.k44.com/`**: URL tujuan ke mana klien harus diarahkan.
 
 
-
-14. Di Vingilot, catatan kedatangan harus jujur, menandai dimulainya era logging yang transparan dan akurat di seluruh Beleriand. Implementasi access log yang jujur memastikan bahwa setiap kunjungan dan aktivitas pengguna tercatat dengan benar, menggunakan IP address klien asli yang sebenarnya, bukan IP address dari reverse proxy (Sirion). Hal ini sangat penting untuk analisis keamanan, monitoring, dan audit trail yang akurat, memungkinkan administrator untuk melacak aktivitas pengguna yang sebenarnya dan mengidentifikasi pola-pola akses yang mencurigakan. Proses ini memastikan bahwa access log aplikasi di Vingilot mencatat IP address klien asli saat lalu lintas melewati Sirion, memberikan gambaran yang jelas dan transparan tentang siapa yang mengakses layanan dan kapan mereka melakukannya.
-
---
+---
+14. Di Vingilot, catatan kedatangan harus jujur. Pastikan access log aplikasi di Vingilot mencatat IP address klien asli saat lalu lintas melewati Sirion (bukan IP Sirion).
+---
 
 #### **Konfigurasi di Vingilot**
 
@@ -836,12 +812,9 @@ Untuk membuktikan bahwa Vingilot sekarang mencatat IP klien yang benar, kami mel
 
 Dengan munculnya alamat IP `192.233.1.2` di dalam log Vingilot, kami berhasil memvalidasi bahwa server *backend* kini memiliki catatan yang "jujur" mengenai siapa yang mengaksesnya.
 
-
-15. Pelabuhan diuji gelombang kecil, menandai dimulainya era pengujian performa dan stress testing yang komprehensif di seluruh Beleriand. Salah satu klien yakni Elrond berperan sebagai penguji yang handal dan menggunakan ApacheBench (ab) untuk membombardir kedua endpoint utama: http://www.<xxxx>.com/app/ untuk layanan dinamis dan http://www.<xxxx>.com/static/ untuk layanan statis melalui hostname kanonik. Pengujian ini dirancang untuk mengukur kemampuan server dalam menangani beban yang tinggi dan memberikan gambaran yang jelas tentang performa sistem di bawah kondisi yang menantang. Untuk setiap endpoint dilakukan 500 request dengan concurrency 10, menciptakan simulasi beban yang realistis yang akan menguji ketahanan dan efisiensi server. Hasil pengujian dirangkum dalam tabel ringkas yang memberikan gambaran komprehensif tentang performa masing-masing layanan.
-
-Tujuannya adalah untuk mengukur dan membandingkan kinerja kedua layanan di bawah beban: **500 total permintaan** dengan **10 permintaan berjalan secara bersamaan** (*concurrency*).
-
---
+---
+15. Pelabuhan diuji gelombang kecil, salah satu klien yakni Elrond menjadi penguji dan menggunakan ApacheBench (ab) untuk membombardir http://www.<xxxx>.com/app/ dan http://www.<xxxx>.com/static/ melalui hostname kanonik. Untuk setiap endpoint lakukan 500 request dengan concurrency 10, dan rangkum hasil dalam tabel ringkas.
+---
 
 #### **Konfigurasi di Elrond**
 
@@ -898,7 +871,9 @@ Berikut adalah rangkuman hasil dari pengujian yang kami lakukan. Kedua layanan b
 Hasil pengujian ini memvalidasi bahwa kedua layanan mampu menangani beban yang diberikan tanpa mengalami kegagalan. Sesuai perkiraan, layanan statis menunjukkan kinerja yang sedikit lebih unggul (throughput lebih tinggi dan waktu respons lebih rendah) dibandingkan dengan layanan dinamis.
 
 
-16. Badai mengubah garis pantai, menandai dimulainya era perubahan infrastruktur yang dinamis dan responsif di seluruh Beleriand. Perubahan A record lindon.<xxxx>.com ke alamat baru (dengan mengubah IP paling belakangnya saja agar mudah) memerlukan koordinasi yang cermat antara server master dan slave. SOA serial di Tirion (ns1) harus dinaikkan untuk menandakan adanya perubahan, dan Valmar (ns2) harus tersinkron untuk memastikan konsistensi data di seluruh jaringan. Karena static.<xxxx>.com adalah CNAME yang menunjuk ke lindon.<xxxx>.com, seluruh akses ke static.<xxxx>.com akan mengikuti alamat baru secara otomatis. TTL (Time To Live) ditetapkan sebesar 30 detik untuk record yang relevan, memungkinkan perubahan yang cepat dan efisien. Verifikasi dilakukan pada tiga momen kritis: sebelum perubahan (mengembalikan alamat lama), sesaat setelah perubahan namun sebelum TTL kedaluwarsa (masih alamat lama karena cache), dan setelah TTL kedaluwarsa (beralih ke alamat baru), memberikan gambaran lengkap tentang proses perubahan DNS yang terjadi.
+---
+16. Badai mengubah garis pantai. Ubah A record lindon.<xxxx>.com ke alamat baru (ubah IP paling belakangnya saja agar mudah), naikkan SOA serial di Tirion (ns1) dan pastikan Valmar (ns2) tersinkron, karena static.<xxxx>.com adalah CNAME → lindon.<xxxx>.com, seluruh akses ke static.<xxxx>.com mengikuti alamat baru, tetapkan TTL = 30 detik untuk record yang relevan dan verifikasi tiga momen yakni sebelum perubahan (mengembalikan alamat lama), sesaat setelah perubahan namun sebelum TTL kedaluwarsa (masih alamat lama karena cache), dan setelah TTL kedaluwarsa (beralih ke alamat baru).
+---
 
 
 #### **Konfigurasi di Tirion (Master)**
@@ -954,11 +929,9 @@ Meskipun kami tidak mengamati momen transisi dari IP lama ke IP baru, hasil ini 
 3.  TTL `30` detik yang baru telah diterima oleh klien, yang akan digunakan untuk *caching* pada permintaan-permintaan berikutnya.
 
 
-17. Andaikata bumi bergetar dan semua tertidur sejenak, mereka harus bangkit sendiri, menandai dimulainya era ketahanan sistem dan recovery otomatis yang tangguh di seluruh Beleriand. Implementasi autostart untuk layanan inti memastikan bahwa sistem dapat pulih dengan cepat dan otomatis setelah mengalami gangguan atau reboot yang tidak terduga. Layanan bind9 di ns1/ns2, nginx di Sirion/Lindon, dan PHP-FPM di Vingilot dikonfigurasi untuk memulai secara otomatis saat sistem boot, memastikan ketersediaan layanan yang tinggi dan mengurangi downtime yang tidak perlu. Setelah konfigurasi autostart, verifikasi dilakukan untuk memastikan bahwa layanan kembali menjawab sesuai fungsinya, memberikan jaminan bahwa sistem dapat beroperasi secara normal dan efisien tanpa memerlukan intervensi manual yang berlebihan.
-
-Pada soal ini, kami memastikan bahwa semua layanan inti pada setiap server akan berjalan kembali secara otomatis setelah proses *reboot*. Ini adalah praktik fundamental dalam administrasi sistem untuk menjamin ketersediaan dan ketahanan layanan (*service resiliency*) tanpa memerlukan intervensi manual.
-
-Karena sistem operasi yang kami gunakan berbasis SysVinit (bukan `systemd`), kami menggunakan perintah `update-rc.d` untuk mengkonfigurasi layanan agar aktif saat *booting*.
+---
+17. Andaikata bumi bergetar dan semua tertidur sejenak, mereka harus bangkit sendiri. Pastikan layanan inti bind9 di ns1/ns2, nginx di Sirion/Lindon, dan PHP-FPM di Vingilot autostart saat reboot, lalu verifikasi layanan kembali menjawab sesuai fungsinya.
+---
 
 --
 
@@ -1037,7 +1010,9 @@ Untuk membuktikan bahwa konfigurasi *auto-start* berhasil, kami melakukan metode
     Keberhasilan ini membuktikan bahwa masalahnya memang terletak pada izin akses. Dengan perbaikan ini, kami dapat memastikan layanan BIND9 kini akan dapat dimulai secara otomatis pada proses *booting* berikutnya. Proses validasi yang sama dapat diaplikasikan untuk semua layanan lain yang telah dikonfigurasi.
 
 
-18. Sang musuh memiliki banyak nama, menandai dimulainya era identitas yang kompleks dan multi-layered di seluruh Beleriand. Implementasi record TXT untuk melkor.<xxxx>.com yang berisi "Morgoth (Melkor)" memungkinkan penyimpanan informasi tekstual yang dapat digunakan untuk berbagai keperluan, seperti verifikasi domain, informasi kontak, atau metadata lainnya. Selain itu, penambahan morgoth.<xxxx>.com sebagai CNAME yang menunjuk ke melkor.<xxxx>.com menciptakan sistem alias yang memungkinkan satu entitas untuk diakses melalui multiple nama domain. Verifikasi query TXT terhadap melkor memastikan bahwa informasi tekstual dapat diakses dengan benar, sementara query ke morgoth mengikuti aliasnya menciptakan fleksibilitas akses yang tinggi dan kemudahan penggunaan yang optimal.
+---
+18. Sang musuh memiliki banyak nama. Tambahkan melkor.<xxxx>.com sebagai record TXT berisi “Morgoth (Melkor)” dan tambahkan morgoth.<xxxx>.com sebagai CNAME → melkor.<xxxx>.com, verifikasi query TXT terhadap melkor dan bahwa query ke morgoth mengikuti aliasnya.
+---
 
 --
 
@@ -1092,7 +1067,10 @@ Untuk membuktikan bahwa kedua *record* tersebut berfungsi sesuai harapan, kami m
 
     **Hasil yang Diharapkan:** *Output* pada `ANSWER SECTION` akan menampilkan dua hal: pertama, bahwa `morgoth.k44.com` adalah `CNAME` untuk `melkor.k44.com`, dan kedua, `TXT` record dari `melkor.k44.com` itu sendiri.
 
-19. Pelabuhan diperluas bagi para pelaut, menandai dimulainya era aksesibilitas yang lebih luas dan fleksibilitas routing yang tinggi di seluruh Beleriand. Implementasi havens.<xxxx>.com sebagai CNAME yang menunjuk ke www.<xxxx>.com menciptakan alternatif akses yang memungkinkan pengguna untuk mengakses layanan melalui nama domain yang berbeda namun tetap mengarah ke tujuan yang sama. Hal ini sangat berguna untuk branding, marketing, atau kemudahan akses yang lebih baik. Akses layanan melalui hostname tersebut dari dua klien berbeda memastikan bahwa resolusi DNS berfungsi dengan benar dan rute aplikasi dapat diakses melalui multiple entry point. Verifikasi ini memberikan jaminan bahwa sistem dapat menangani berbagai cara akses yang berbeda tanpa mengalami masalah routing atau resolusi yang dapat mengganggu pengalaman pengguna.
+
+---
+19. Pelabuhan diperluas bagi para pelaut. Tambahkan havens.<xxxx>.com sebagai CNAME → www.<xxxx>.com, lalu akses layanan melalui hostname tersebut dari dua klien berbeda untuk memastikan resolusi dan rute aplikasi berfungsi.
+---
 
 --
 
@@ -1143,7 +1121,9 @@ Hasil ini memvalidasi beberapa hal secara berurutan:
 3.  Permintaan berhasil masuk ke Sirion (reverse proxy), yang kemudian meneruskannya ke Vingilot.
 4.  Vingilot memproses permintaan dan mengembalikan konten yang benar.
 
-20. Kisah ditutup di beranda Sirion, menandai dimulainya era presentasi yang elegan dan user-friendly di seluruh Beleriand. Implementasi halaman depan yang bertajuk "War of Wrath: Lindon bertahan" menciptakan portal utama yang menarik dan informatif, memungkinkan pengguna untuk dengan mudah mengakses berbagai layanan yang tersedia. Halaman ini memuat tautan yang jelas dan intuitif ke /app untuk layanan dinamis dan /static untuk layanan statis, memberikan navigasi yang mudah dan user-friendly. Pastikan seluruh klien dapat membuka beranda dan menelusuri kedua tautan tersebut menggunakan hostname (mis. www.<xxxx>.com), bukan IP address, memastikan konsistensi branding dan kemudahan akses yang optimal. Implementasi ini menciptakan pengalaman pengguna yang lengkap dan profesional, menutup seluruh rangkaian implementasi infrastruktur web yang telah dibangun dengan elegan.
+---
+20. Kisah ditutup di beranda Sirion. Sediakan halaman depan bertajuk “War of Wrath: Lindon bertahan” yang memuat tautan ke /app dan /static. Pastikan seluruh klien membuka beranda dan menelusuri kedua tautan tersebut menggunakan hostname (mis. www.<xxxx>.com), bukan IP address.
+---
 
 
 Sebagai tugas terakhir, kami membuat halaman depan (*landing page*) sederhana untuk disajikan oleh **Sirion**. Halaman ini berfungsi sebagai portal utama yang memberikan navigasi mudah ke dua layanan utama yang ada di belakang *reverse proxy*: layanan statis (`/static`) dan layanan dinamis (`/app`).
@@ -1154,13 +1134,14 @@ Sebagai tugas terakhir, kami membuat halaman depan (*landing page*) sederhana un
 
 Kami membuat sebuah file `index.html` sederhana di dalam direktori *root* Nginx pada server **Sirion** (`/var/www/html/`). Halaman ini berisi judul "War of Wrath: Lindon bertahan" dan dua tautan (*hyperlink*) yang mengarah ke *path* `/app` dan `/static`.
 
-```sh
+```
 cat <<EOF > /var/www/html/index.html
 <h1>War of Wrath: Lindon bertahan</h1>
 <a href="http://www.k44.com/app">App</a>
 <a href="http://www.k44.com/static">Static</a>
 EOF
 ```
+![alt text](assets/soal20/image_soa20_1.png)
 
 Karena Nginx di Sirion sudah dikonfigurasi pada soal sebelumnya untuk menyajikan file dari direktori `/var/www/html/` untuk *path root* (`/`), tidak ada perubahan konfigurasi Nginx tambahan yang diperlukan untuk soal ini.
 
@@ -1168,9 +1149,6 @@ Karena Nginx di Sirion sudah dikonfigurasi pada soal sebelumnya untuk menyajikan
 
 #### **Validasi**
 
-Untuk membuktikan bahwa halaman depan ini berfungsi dan tautan di dalamnya mengarah ke tujuan yang benar, kami melakukan validasi dari klien **Earendil** menggunakan `curl`.
-
-**Cara Validasi:**
 
 **Mengakses Halaman Depan:**
     Pertama, kami mengakses nama domain kanonik `www.k44.com` tanpa *path* tambahan.
