@@ -7,9 +7,10 @@ Tiara Fatimah Azzahra |	5027241090
 
 ## Laporan
 
-1. Di tepi Beleriand yang porak-poranda, Eonwe merentangkan tiga jalur strategis untuk memfasilitasi komunikasi dan distribusi sumber daya di seluruh wilayah yang telah hancur akibat perang. Jalur Barat diperuntukkan bagi Earendil dan Elwing sebagai penghuni utama wilayah tersebut, sementara jalur Timur melayani Círdan, Elrond, dan Maglor yang merupakan pemimpin-pemimpin penting di wilayah timur. Selain itu, dibangun pula pelabuhan DMZ (Demilitarized Zone) yang menjadi pusat administrasi dan keamanan bagi Sirion, Tirion, Valmar, Lindon, dan Vingilot. Setiap tokoh dalam jaringan ini harus memiliki alamat IP yang unik dan default gateway yang tepat agar dapat berkomunikasi secara efektif melalui router Eonwe yang berfungsi sebagai pusat konektivitas utama.
-
-
+---
+1. Di tepi Beleriand yang porak-poranda, Eonwe merentangkan tiga jalur: Barat untuk Earendil dan Elwing, Timur untuk Círdan, Elrond, Maglor, serta pelabuhan DMZ bagi Sirion, Tirion, Valmar, Lindon, Vingilot. Tetapkan alamat dan default gateway tiap tokoh sesuai glosarium yang sudah diberikan.
+---
+![](assets/soal1/topologi.png)
 
 **Eonwe**
 
@@ -132,27 +133,32 @@ iface eth0 inet static
   netmask 255.255.255.0
   gateway 192.233.3.1
 ```
+---
+2. Angin dari luar mulai berhembus ketika Eonwe membuka jalan ke awan NAT. Pastikan jalur WAN di router aktif dan NAT meneruskan trafik keluar bagi seluruh alamat internal sehingga host di dalam dapat mencapai layanan di luar menggunakan IP address.	
+---
 
-2. Angin dari luar mulai berhembus ketika Eonwe membuka jalan ke awan NAT, menandai dimulainya era konektivitas global bagi seluruh penghuni Beleriand. Implementasi Network Address Translation (NAT) ini memungkinkan semua host internal yang berada di belakang router Eonwe untuk mengakses layanan internet eksternal menggunakan alamat IP publik yang dibagikan. Proses ini sangat penting untuk memastikan bahwa setiap host di dalam jaringan privat dapat berkomunikasi dengan dunia luar tanpa memerlukan alamat IP publik yang terpisah untuk setiap perangkat, sehingga menghemat sumber daya alamat IP yang terbatas dan meningkatkan keamanan jaringan internal.
-
-Isi konfigurasi pada router Eonwe /root/.bashrc
-```sh
+![alt text](assets/soal2/image.png)
+konfigurasi pada router Eonwe /root/.bashrc
+```
 apt update
 apt install iptables -y
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.233.0.0/16
 ```
 
-3. Kabar dari Barat menyapa Timur, menandai dimulainya era komunikasi lintas wilayah yang harmonis di seluruh Beleriand. Implementasi routing internal yang efektif melalui router Eonwe memungkinkan kelima klien dari berbagai segmen jaringan untuk saling berkomunikasi tanpa hambatan, menciptakan jaringan yang terintegrasi dan efisien. Selain itu, setiap host non-router harus dikonfigurasi dengan resolver DNS eksternal (192.168.122.1) yang akan memungkinkan mereka untuk melakukan resolusi nama domain internet sejak awal aktivasi interface, sehingga memastikan akses penuh ke layanan eksternal dan memfasilitasi komunikasi yang lancar dengan dunia luar.
+3. Kabar dari Barat menyapa Timur. Pastikan kelima klien dapat saling berkomunikasi lintas jalur (routing internal via Eonwe berfungsi), lalu pastikan setiap host non-router menambahkan resolver 192.168.122.1 saat interfacenya aktif agar akses paket dari internet tersedia sejak awal.
 
+![alt text](assets/soal3/image.png)
 Masukkan resolver 192.168.122.1 ke semua non-router
-```sh
+
+```
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 ```
-Lalu untuk mengecek klien barat menyapa timur dengan ngeping ip 192.233.2.2 pada terminal router timur misal Earendil
+Kemudian mengecek ngeping ip 192.233.2.2 pada terminal router timur misal Earendil
 ```sh
-ping 192.233.2.2
+ping 192.233.1.2
 ```
-4. Para penjaga nama naik ke menara, menandai dimulainya era manajemen DNS yang terpusat dan terstruktur di seluruh Beleriand. Di Tirion (ns1/master), dibangun zona \<xxxx>.com sebagai server DNS authoritative yang akan menjadi pusat resolusi nama domain untuk seluruh wilayah. Konfigurasi ini meliputi pembuatan Start of Authority (SOA) record yang menunjuk ke ns1.\<xxxx>.com sebagai server utama, serta Name Server (NS) records untuk ns1.\<xxxx>.com dan ns2.\<xxxx>.com yang akan melayani zona tersebut. Selain itu, dibuat A records untuk ns1.\<xxxx>.com dan ns2.\<xxxx>.com yang mengarah ke alamat Tirion dan Valmar, serta A record apex \<xxxx>.com yang mengarah ke alamat Sirion sebagai front door utama. Fitur notify dan allow-transfer diaktifkan untuk Valmar, dengan forwarders diset ke 192.168.122.1 untuk resolusi eksternal. Di Valmar (ns2/slave), zona \<xxxx>.com ditarik dari Tirion dan dikonfigurasi untuk menjawab secara authoritative. Pada seluruh host non-router, urutan resolver diubah menjadi ns1.\<xxxx>.com → ns2.\<xxxx>.com → 192.168.122.1 untuk memastikan resolusi yang optimal dan redundansi yang baik.
+![alt text](assets/soal3/image2.png)
+4. Para penjaga nama naik ke menara, di Tirion (ns1/master) bangun zona <xxxx>.com sebagai authoritative dengan SOA yang menunjuk ke ns1.<xxxx>.com dan catatan NS untuk ns1.<xxxx>.com dan ns2.<xxxx>.com. Buat A record untuk ns1.<xxxx>.com dan ns2.<xxxx>.com yang mengarah ke alamat Tirion dan Valmar sesuai glosarium, serta A record apex <xxxx>.com yang mengarah ke alamat Sirion (front door), aktifkan notify dan allow-transfer ke Valmar, set forwarders ke 192.168.122.1. Di Valmar (ns2/slave) tarik zona <xxxx>.com dari Tirion dan pastikan menjawab authoritative. pada seluruh host non-router ubah urutan resolver menjadi IP dari ns1.<xxxx>.com → ns2.<xxxx>.com → 192.168.122.1. Verifikasi query ke apex dan hostname layanan dalam zona dijawab melalui ns1/ns2.
 
 
 **Tirion**
@@ -350,7 +356,6 @@ service bind9 restart
 
 #### **Konfigurasi di Tirion (Master)**
 
-Pertama, kami mendeklarasikan *reverse zone* `3.233.192.in-addr.arpa` di file `/etc/bind/named.conf.local`.
 
 ```sh
 cat <<EOF >> /etc/bind/named.conf.local
@@ -362,7 +367,6 @@ zone "3.233.192.in-addr.arpa" {
 EOF
 ```
 
-Selanjutnya, kami membuat file *zone*-nya dan mengisinya dengan *record* `PTR` untuk Sirion (`192.233.3.2`), Lindon (`192.233.3.5`), dan Vingilot (`192.233.3.6`).
 
 ```sh
 cat <<EOF > /etc/bind/k44/3.233.192.in-addr.arpa
@@ -385,7 +389,6 @@ EOF
 
 #### **Konfigurasi di Valmar (Slave)**
 
-Di Valmar, kami mengkonfigurasinya sebagai *slave* untuk *reverse zone* yang sama, dengan menunjuk Tirion sebagai *master*.
 
 ```sh
 cat <<EOF >> /etc/bind/named.conf.local
@@ -399,7 +402,6 @@ EOF
 
 #### **Verifikasi**
 
-Pengujian dilakukan dari klien **Earendil** menggunakan perintah:
 
 ```sh
 host -t ptr 192.233.3.2
@@ -424,20 +426,18 @@ Pada soal ini, kami bertugas untuk mengaktifkan **Lindon** sebagai *web server* 
 
 #### **Konfigurasi di Lindon**
 
-Langkah pertama adalah menginstal **Apache2**, yang merupakan perangkat lunak *web server* yang akan kami gunakan.
 
 ```sh
 apt update
 apt install apache2 -y
 ```
 
-Selanjutnya, kami membuat direktori `/var/www/annals/` yang akan menjadi *root* atau direktori utama untuk konten web.
 
 ```sh
 mkdir -p /var/www/annals/
 ```
 
-Kemudian, kami membuat file konfigurasi *Virtual Host* baru untuk Apache. Konfigurasi ini mengarahkan semua permintaan ke `DocumentRoot` `/var/www/annals` dan yang terpenting, mengaktifkan `Options +Indexes` untuk mengizinkan *directory listing*.
+
 
 ```sh
 cat <<EOF > /etc/apache2/sites-available/000-default.conf
@@ -464,24 +464,15 @@ service apache2 restart
 
 #### **Validasi**
 
-Untuk membuktikan bahwa *web server* di Lindon berjalan dengan benar, kami melakukan validasi dari salah satu klien, yaitu **Earendil**.
 
-**Cara Validasi:**
-Kami menggunakan perintah `curl` untuk mengakses *hostname* `static.k44.com` dari terminal Earendil. `curl` adalah alat baris perintah yang digunakan untuk mentransfer data dengan URL, yang dalam kasus ini akan mengambil konten halaman web.
 
 ```sh
 curl static.k44.com
 ```
 
-**Hasil yang Diharapkan:**
-Jika konfigurasi berhasil, perintah `curl` akan mengembalikan output berupa kode HTML. Output ini adalah halaman yang secara otomatis dibuat oleh Apache karena fitur `autoindex` aktif. Halaman ini akan berisi judul **"Index of /"**, yang menandakan bahwa *web server* berhasil menyajikan daftar isi dari direktori `/var/www/annals/`.
-
-
 
 10. Vingilot mengisahkan cerita dinamis, menandai dimulainya era aplikasi web yang interaktif dan responsif di seluruh Beleriand. Implementasi web dinamis menggunakan PHP-FPM pada hostname app.\<xxxx>.com memungkinkan pengembangan aplikasi web yang kompleks dan dinamis, dengan kemampuan untuk mengeksekusi skrip PHP secara efisien dan aman. Aplikasi ini dilengkapi dengan beranda yang menarik dan halaman about yang informatif, memberikan pengalaman pengguna yang lengkap dan profesional. Fitur URL rewrite diterapkan sehingga pengguna dapat mengakses /about tanpa perlu mengetik akhiran .php, menciptakan URL yang lebih bersih dan user-friendly. Akses ke layanan ini harus dilakukan melalui hostname untuk memastikan konsistensi dan kemudahan penggunaan di seluruh jaringan.
 
-
-Pada tahap ini, kami mengkonfigurasi **Vingilot** untuk berfungsi sebagai *web server* dinamis yang dapat mengeksekusi skrip PHP. Implementasi ini menggunakan **PHP-FPM** (FastCGI Process Manager) untuk performa yang lebih baik dan menerapkan **URL Rewrite** agar URL lebih ramah pengguna.
 
 --
 
