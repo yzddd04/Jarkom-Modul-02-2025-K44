@@ -745,6 +745,8 @@ Jika konfigurasi berhasil, server tidak akan menampilkan konten halaman. Sebalik
   * **`Location: http://www.k44.com/`**: URL tujuan ke mana klien harus diarahkan.
 
 
+![alt textt](assets/Screenshot2025-10-22234445.png)
+
 ---
 14. Di Vingilot, catatan kedatangan harus jujur. Pastikan access log aplikasi di Vingilot mencatat IP address klien asli saat lalu lintas melewati Sirion (bukan IP Sirion).
 ---
