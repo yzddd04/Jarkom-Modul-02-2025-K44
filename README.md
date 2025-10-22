@@ -844,7 +844,7 @@ Kami menjalankan dua perintah `ab` secara terpisah, satu untuk setiap *endpoint*
     ab -n 500 -c 10 http://www.k44.com/app/
     ```
  
-    ![alt text](Screenshot2025-10-22235135.png)
+    ![alt text](235135.png)
 2.  **Uji Beban pada Layanan Statis (`/static/`):**
     Perintah ini mengirimkan 500 permintaan ke Lindon, dengan 10 koneksi konkuren.
 
