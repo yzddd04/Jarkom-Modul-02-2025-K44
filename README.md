@@ -6,10 +6,6 @@ Ahmad Yazid Arifuddin | 5027241040
 Tiara Fatimah Azzahra |	5027241090
 
 ## Soal 1
-Pertama tama buat topologi di GNS3 terlebih dahulu
-![alt text](assets/soal1/topologi.png)
-setelah itu config di setiap node nya
-
 #### Router
 ```
 auto eth0
@@ -17,18 +13,18 @@ iface eth0 inet dhcp
 
 auto eth1
 iface eth1 inet static
-    	address 192.233.1.1
-    	netmask 255.255.255.0
+    address 192.233.2.1
+    netmask 255.255.255.0
 
 auto eth2
 iface eth2 inet static
-    	address 192.233.2.1
-    	netmask 255.255.255.0
+    address 192.233.1.1
+    netmask 255.255.255.0
 
 auto eth3
 iface eth3 inet static
-    	address 192.233.3.1
-    	netmask 255.255.255.0
+    address 192.233.3.1
+    netmask 255.255.255.0
 ```
 
 #### Barat
@@ -36,20 +32,20 @@ iface eth3 inet static
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.1.2
-        netmask 255.255.255.0	
-    	gateway 192.233.1.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.2.2
+    netmask 255.255.255.0
+    gateway 192.233.2.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 - Elwing
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.1.3
-        netmask 255.255.255.0
-    	gateway 192.233.1.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf	
+    address 192.233.2.3
+    netmask 255.255.255.0
+    gateway 192.233.2.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 #### Timur
@@ -57,28 +53,28 @@ up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 auto eth0
 iface eth0 inet static
-        address 192.233.2.2
-    	netmask 255.255.255.0
-    	gateway 192.233.2.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.1.2
+    netmask 255.255.255.0
+    gateway 192.233.1.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 - Elrond
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.2.3
-    	netmask 255.255.255.0
-    	gateway 192.233.2.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.1.3
+    netmask 255.255.255.0
+    gateway 192.233.1.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 - Maglor
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.2.4
-    	netmask 255.255.255.0
-    	gateway 192.233.2.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.1.4
+    netmask 255.255.255.0
+    gateway 192.233.1.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 #### Pelabuhan DMZ (Switch 3)
@@ -86,10 +82,10 @@ up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.3.2
-    	netmask 255.255.255.0
-    	gateway 192.233.3.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.3.10
+    netmask 255.255.255.0
+    gateway 192.233.3.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 #### Pelabuhan DMZ (Switch 4)
@@ -97,37 +93,37 @@ up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.3.3
-    	netmask 255.255.255.0
-        gateway 192.233.3.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.3.2
+    netmask 255.255.255.0
+    gateway 192.233.3.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 - Valmar
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.3.4
-    	netmask 255.255.255.0
-        gateway 192.233.3.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.3.3
+    netmask 255.255.255.0
+    gateway 192.233.3.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 - Lindon
 ```
 auto eth0
 iface eth0 inet static
-        address 192.233.3.5
-    	netmask 255.255.255.0
-    	gateway 192.233.3.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.3.4
+    netmask 255.255.255.0
+    gateway 192.233.3.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 - Vingilot
 ```
 auto eth0
 iface eth0 inet static
-    	address 192.233.3.6
-        netmask 255.255.255.0
-    	gateway 192.233.3.1
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
+    address 192.233.3.5
+    netmask 255.255.255.0
+    gateway 192.233.3.1
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 
@@ -159,6 +155,122 @@ iptables -A FORWARD -i eth3 -o eth2 -j ACCEPT
 ```
 
 ## Soal 4
+
+##### KONFIGURASI DNS MASTER (TIRION)
+```
+nano /etc/bind/named.conf.local
+zone "k44.com" {
+    type master;
+    notify yes;
+    also-notify { 192.233.3.3; };
+    allow-transfer { 192.233.3.3; };
+    file "/etc/bind/k44.com";
+};
+
+zone "3.89.10.in-addr.arpa" {
+	type master;
+    notify yes;
+    also-notify { 192.233.3.3; };
+    allow-transfer { 192.233.3.3; };
+    file "/etc/bind/3.89.10.in-addr.arpa";
+};
+```
+
+```
+nano /etc/bind/k44.com
+$TTL    604800          ; Waktu cache default (detik)
+@       IN      SOA     ns1.k44.com. root.k44.com. (
+                        2024400401 ; Serial (format YYYYMMDDXX)
+                        604800     ; Refresh (1 minggu)
+                        86400      ; Retry (1 hari)
+                        2419200    ; Expire (4 minggu)
+                        604800 )   ; Negative Cache TTL
+;
+
+@       IN      NS      ns1.k44.com.
+@       IN      NS      ns2.k44.com.
+@       IN      A       192.233.3.10
+ns1     IN      A       192.233.3.2
+ns2     IN      A       192.233.3.3
+eonwe     IN      A       192.168.122.247
+earendil  IN      A       192.233.2.2
+elwing    IN      A       192.233.2.3
+cirdan   IN      A       192.233.1.2
+elrond    IN      A       192.233.1.3
+maglor    IN      A       192.233.1.4
+sirion   IN      A       192.233.3.10
+lindon   IN      A       192.233.3.4
+vingilot  IN      A       192.233.3.5
+www     IN      CNAME   sirion.k44.com.
+static IN      CNAME   lindon.k44.com.
+app   IN      CNAME   vingilot.k44.com.
+```
+
+```
+nano /etc/bind/named.conf.options
+options {
+        directory "/var/cache/bind";
+
+        dnssec-validation no;
+
+        forwarders { 192.168.122.1; };
+        allow-query { any; };
+        auth-nxdomain no;
+        listen-on-v6 { any; };
+};
+```
+
+```
+nano /etc/bind/3.89.10.in-addr.arpa
+$TTL    604800          ; Waktu cache default (detik)
+@       IN      SOA     k44.com. root.k44.com. (
+                        2025100401 ; Serial (format YYYYMMDDXX)
+                        604800     ; Refresh (1 minggu)
+                        86400      ; Retry (1 hari)
+                        2419200    ; Expire (4 minggu)
+                        604800 )   ; Negative Cache TTL
+;
+
+3.89.10.in-addr.arpa.       IN      NS      k44.com.
+10      IN      PTR     sirion.k44.com.
+4       IN      PTR     lindon.k44.com.
+5       IN      PTR     vingilot.k44.com.
+
+ln -s /etc/init.d/named /etc/init.d/bind9
+service bind9 restart
+```
+
+##### KONFIGURASI DNS SLAVE (Valmar)
+```
+apt update && apt install bind9 -y
+
+nano /etc/bind/named.conf.local
+zone "k44.com" {
+    type slave;
+    masters { 192.233.3.2; };
+    file "/etc/bind/k44.com";
+};
+
+zone "3.89.10.in-addr.arpa" {
+	type slave;
+    masters { 192.233.3.2; };
+	file "/etc/bind/3.89.10.in-addr.arpa";
+};
+
+ln -s /etc/init.d/named /etc/init.d/bind9
+service bind9 restart
+```
+
+
+##### Pengujian dari Klien
+```
+nano /etc/resolve.conf
+nameserver 192.233.3.2
+nameserver 192.233.3.3
+nameserver 192.168.122.1
+```
+
+
 
 ##### Konfigurasi Tirion
 ```
