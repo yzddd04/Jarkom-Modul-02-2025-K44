@@ -168,7 +168,7 @@ apt update
 apt install bind9 -y
 ln -s /etc/init.d/named /etc/init.d/bind9
 ```
-
+![alt text](assets/soal4/image1.png)
 
 ```sh
 cat <<EOF > /etc/bind/named.conf.options
@@ -187,9 +187,9 @@ options {
 
 EOF
 ```
+![alt text](assets/soal4/image2.png)
 
-
-```sh
+```
 mkdir -p /etc/bind/k44 && cat <<EOF > /etc/bind/k44/k44.com
 \$TTL    604800          ; Waktu cache default (detik)
 @       IN      SOA     ns1.k44.com. root.k44.com. (
@@ -209,9 +209,9 @@ ns2     IN       A      192.233.3.4
 
 EOF
 ```
+![alt text](assets/soal4/image3.png)
 
-
-```sh
+```
 cat <<EOF > /etc/bind/named.conf.local
 zone "k44.com" {
   type master;
@@ -222,23 +222,23 @@ zone "k44.com" {
 
 EOF
 ```
+![alt text](assets/soal4/image4.png)
 
-
-```sh
+```
 service bind9 restart
 ```
+![alt text](assets/soal4/image5.png)
 
-
-```sh
+```
 echo "nameserver 192.233.3.3" > /etc/resolv.conf
 echo "nameserver 192.233.3.4" >> /etc/resolv.conf
 echo "nameserver 192.168.122.1" >> /etc/resolv.conf
 ```
-
+![alt text](assets/soal4/image6.png)
 ```
 dig @localhost k44.com
 ```
-
+![alt text](assets/soal4/image7.png)
 
 **Valmar**
 
