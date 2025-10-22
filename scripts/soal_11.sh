@@ -11,7 +11,7 @@ cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
 cat > /etc/nginx/sites-available/default << 'EOF'
 server {
     listen 80;
-    server_name sirion.k14.com www.k14.com;
+    server_name sirion.K44.com www.K44.com;
     
     # Root location
     location / {

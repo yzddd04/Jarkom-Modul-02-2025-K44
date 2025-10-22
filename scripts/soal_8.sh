@@ -1,72 +1,140 @@
-/etc/bind/zones/db.192.233.3
+#!/bin/bash
 
-; BIND reverse data file for 192.233.3.0/24
-;
+# SOAL 8: Setup Reverse DNS untuk subnet DMZ (192.233.3.0/24)
+# Jalankan di: TIRION (ns1)
+
+echo "=========================================="
+echo "SOAL 8: Setup Reverse DNS"
+echo "=========================================="
+echo ""
+
+# Tambahkan reverse zone di named.conf.local
+echo "Updating named.conf.local..."
+
+cat > /etc/bind/named.conf.local << 'EOF'
+zone "K44.com" {
+    type master;
+    file "/etc/bind/zones/db.K44.com";
+    notify yes;
+    allow-transfer { 192.233.3.3; };
+};
+
+zone "3.218.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.192.233.3";
+    notify yes;
+    allow-transfer { 192.233.3.3; };
+};
+EOF
+
+echo "✓ named.conf.local updated"
+
+# Buat reverse zone file
+echo ""
+echo "Creating reverse zone file..."
+
+cat > /etc/bind/zones/db.192.233.3 << 'EOF'
 $TTL    604800
 @       IN      SOA     ns1.K44.com. admin.K44.com. (
-                        2024100201      ; Serial
-                        604800          ; Refresh
-                        86400           ; Retry
-                        2419200         ; Expire
-                        604800 )        ; Negative Cache TTL
-
-; Name Servers
+                         2025101201     ; Serial
+                         604800         ; Refresh
+                         86400          ; Retry
+                         2419200        ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+; Name servers
 @       IN      NS      ns1.K44.com.
 @       IN      NS      ns2.K44.com.
 
-; PTR Records - Reverse lookup
-2       IN      PTR     sirion.K44.com.
-5       IN      PTR     vingilot.K44.com.
-6       IN      PTR     lindon.K44.com.
+; PTR records untuk DMZ
+2       IN      PTR     ns1.K44.com.
+3       IN      PTR     ns2.K44.com.
+4       IN      PTR     sirion.K44.com.
+5       IN      PTR     lindon.K44.com.
+6       IN      PTR     vingilot.K44.com.
+EOF
 
--------------------------------
-nano /etc/bind/named.conf.local
+echo "✓ Reverse zone file created"
 
-// Reverse zone for DMZ segment
-zone "3.78.10.in-addr.arpa" {
-    type master;
-    file "/etc/bind/zones/db.192.233.3";
-    allow-transfer { 192.233.3.4; };  // Valmar
-    notify yes;
+# Set permissions
+chown bind:bind /etc/bind/zones/db.192.233.3
+chmod 644 /etc/bind/zones/db.192.233.3
+
+# Check configuration
+echo ""
+echo "Checking configuration..."
+named-checkconf
+
+if [ $? -ne 0 ]; then
+    echo "❌ Configuration error!"
+    exit 1
+fi
+echo "✓ Configuration OK"
+
+# Check reverse zone
+named-checkzone 3.218.192.in-addr.arpa /etc/bind/zones/db.192.233.3
+
+if [ $? -ne 0 ]; then
+    echo "❌ Reverse zone error!"
+    exit 1
+fi
+echo "✓ Reverse zone OK"
+
+# Reload bind9
+echo ""
+echo "Reloading bind9..."
+rndc reload
+
+sleep 2
+
+echo ""
+echo "=========================================="
+echo "Setup reverse zone di VALMAR (slave)..."
+echo "=========================================="
+echo ""
+echo "Jalankan di VALMAR:"
+echo ""
+cat << 'VALMARSCRIPT'
+cat > /etc/bind/named.conf.local << 'EOF'
+zone "K44.com" {
+    type slave;
+    file "/var/cache/bind/db.K44.com";
+    masters { 192.233.3.2; };
 };
 
--------------------------------
-/etc/bind/named.conf.local
-
-// Reverse zone for DMZ segment (slave)
-zone "3.78.10.in-addr.arpa" {
+zone "3.218.192.in-addr.arpa" {
     type slave;
     file "/var/cache/bind/db.192.233.3";
-    masters { 192.233.3.3; };  // Tirion
+    masters { 192.233.3.2; };
 };
+EOF
 
--------------------------------
-pkill named
-named -u bind -g &
+named-checkconf
+rndc reload
+sleep 3
+ls -la /var/cache/bind/
+VALMARSCRIPT
 
--------------------------------
-# Di Valmar
-rndc reload 3.78.10.in-addr.arpa
-sleep 10
+echo ""
+echo "=========================================="
+echo "Setelah Valmar diupdate, test reverse DNS:"
+echo "=========================================="
+echo ""
 
-# Di Client
-nslookup 192.233.3.2
-nslookup 192.233.3.5  
-nslookup 192.233.3.6
+echo "Testing reverse DNS queries..."
+echo ""
+echo "Reverse lookup 192.233.3.4 (Sirion):"
+dig @192.233.3.2 -x 192.233.3.4 +short
+echo ""
+echo "Reverse lookup 192.233.3.5 (Lindon):"
+dig @192.233.3.2 -x 192.233.3.5 +short
+echo ""
+echo "Reverse lookup 192.233.3.6 (Vingilot):"
+dig @192.233.3.2 -x 192.233.3.6 +short
+echo ""
 
-# Di Valmar
-nslookup 192.233.3.2 localhost
+echo "Full reverse query untuk 192.233.3.4:"
+dig @192.233.3.2 -x 192.233.3.4
 
-
--------------------------------
-# Di Valmar
-rndc reload 3.78.10.in-addr.arpa
-sleep 10
-
-# Di Client
-nslookup 192.233.3.2
-nslookup 192.233.3.5  
-nslookup 192.233.3.6
-
-# Di Valmar
-nslookup 192.233.3.2 localhost
+echo ""
+echo "✅ SOAL 8 SELESAI setelah Valmar diupdate!"

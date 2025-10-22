@@ -16,7 +16,7 @@ cat > /var/www/admin/index.html << 'EOF'
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Panel - k14.com</title>
+    <title>Admin Panel - K44.com</title>
 </head>
 <body>
     <h1>Admin Panel</h1>
@@ -33,7 +33,7 @@ htpasswd -bc /etc/nginx/.htpasswd admin admin123
 cat > /etc/nginx/sites-available/default << 'EOF'
 server {
     listen 80;
-    server_name sirion.k14.com www.k14.com;
+    server_name sirion.K44.com www.K44.com;
 
     # Konfigurasi untuk path /admin dengan Basic Auth
     location /admin {
@@ -90,4 +90,4 @@ systemctl restart nginx
 echo "Basic Auth untuk /admin berhasil dikonfigurasi!"
 echo "Username: admin"
 echo "Password: admin123"
-echo "Test dengan: curl -u admin:admin123 http://www.k14.com/admin/"
+echo "Test dengan: curl -u admin:admin123 http://www.K44.com/admin/"

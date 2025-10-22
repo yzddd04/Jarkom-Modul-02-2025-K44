@@ -151,7 +151,7 @@ echo "Configuring nginx..."
 cat > /etc/nginx/sites-available/app << EOF
 server {
     listen 80;
-    server_name app.K14.com;
+    server_name app.K44.com;
 
     root /var/www/app;
     index index.php index.html;
@@ -246,9 +246,9 @@ echo "Verifikasi dari klien:"
 echo "=========================================="
 echo "Jalankan di klien (Earendil/Cirdan):"
 echo ""
-echo "  curl http://app.K14.com"
-echo "  curl http://app.K14.com/about"
-echo "  curl http://app.K14.com | grep 'PHP Version'"
+echo "  curl http://app.K44.com"
+echo "  curl http://app.K44.com/about"
+echo "  curl http://app.K44.com | grep 'PHP Version'"
 echo ""
 echo "⚠️  Pastikan akses pakai HOSTNAME, bukan IP!"
 echo ""
