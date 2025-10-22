@@ -1,9 +1,7 @@
-# PRAKTIKUM JARKOM MODUL 2 KELOMPOK 44 - 2025
+# Jarkom-Modul-01-2025-K44
 
-## Angota Kelompok
-
- Nama                 | NRP        
---------------------- | ------- 
+Nama                  | NRP
+----------------------|-----------
 Ahmad Yazid Arifuddin | 5027241040
 Tiara Fatimah Azzahra |	5027241090
 
