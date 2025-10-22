@@ -745,7 +745,7 @@ Jika konfigurasi berhasil, server tidak akan menampilkan konten halaman. Sebalik
   * **`Location: http://www.k44.com/`**: URL tujuan ke mana klien harus diarahkan.
 
 
-![alt textt](assets/Screenshot2025-10-22234445.png)
+![alt textt](Screenshot2025-10-22234445.png)
 
 ---
 14. Di Vingilot, catatan kedatangan harus jujur. Pastikan access log aplikasi di Vingilot mencatat IP address klien asli saat lalu lintas melewati Sirion (bukan IP Sirion).
@@ -844,7 +844,7 @@ Kami menjalankan dua perintah `ab` secara terpisah, satu untuk setiap *endpoint*
     ab -n 500 -c 10 http://www.k44.com/app/
     ```
  
-    ![alt text](assets/Screenshot2025-10-22235135.png)
+    ![alt text](Screenshot2025-10-22235135.png)
 2.  **Uji Beban pada Layanan Statis (`/static/`):**
     Perintah ini mengirimkan 500 permintaan ke Lindon, dengan 10 koneksi konkuren.
 
