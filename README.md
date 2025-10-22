@@ -851,7 +851,7 @@ Kami menjalankan dua perintah `ab` secara terpisah, satu untuk setiap *endpoint*
     ```sh
     ab -n 500 -c 10 http://www.k44.com/static/
     ```
-
+     ![alt text](no16.png)
 **Hasil yang Diharapkan:**
 Setelah setiap perintah selesai, ApacheBench akan mencetak laporan statistik. Metrik utama yang kami perhatikan adalah:
 
