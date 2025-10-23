@@ -176,13 +176,13 @@ Lalu untuk mengecek klien barat menyapa timur dengan ngeping ip 192.233.2.2 pada
 ```sh
 ping 192.233.2.2
 ```
+
+![alt image](assets/soal3/image2.png)
 ---
 
 4. Para penjaga nama naik ke menara, menandai dimulainya era manajemen DNS yang terpusat dan terstruktur di seluruh Beleriand. Di Tirion (ns1/master), dibangun zona \<xxxx>.com sebagai server DNS authoritative yang akan menjadi pusat resolusi nama domain untuk seluruh wilayah. Konfigurasi ini meliputi pembuatan Start of Authority (SOA) record yang menunjuk ke ns1.\<xxxx>.com sebagai server utama, serta Name Server (NS) records untuk ns1.\<xxxx>.com dan ns2.\<xxxx>.com yang akan melayani zona tersebut. Selain itu, dibuat A records untuk ns1.\<xxxx>.com dan ns2.\<xxxx>.com yang mengarah ke alamat Tirion dan Valmar, serta A record apex \<xxxx>.com yang mengarah ke alamat Sirion sebagai front door utama. Fitur notify dan allow-transfer diaktifkan untuk Valmar, dengan forwarders diset ke 192.168.122.1 untuk resolusi eksternal. Di Valmar (ns2/slave), zona \<xxxx>.com ditarik dari Tirion dan dikonfigurasi untuk menjawab secara authoritative. Pada seluruh host non-router, urutan resolver diubah menjadi ns1.\<xxxx>.com → ns2.\<xxxx>.com → 192.168.122.1 untuk memastikan resolusi yang optimal dan redundansi yang baik.
-
-**Penjelasan:** Kami membangun infrastruktur DNS master-slave dengan Tirion sebagai server master dan Valmar sebagai server slave untuk zona k44.com. Konfigurasi meliputi SOA record, NS records, dan A records yang diperlukan. Server master dikonfigurasi dengan notify dan allow-transfer untuk Valmar, sementara server slave dikonfigurasi untuk menarik zona dari master. Semua host non-router dikonfigurasi untuk menggunakan DNS server internal sebagai prioritas utama, dengan fallback ke DNS eksternal.
-
 ---
+**Penjelasan:** Kami membangun infrastruktur DNS master-slave dengan Tirion sebagai server master dan Valmar sebagai server slave untuk zona k44.com. Konfigurasi meliputi SOA record, NS records, dan A records yang diperlukan. Server master dikonfigurasi dengan notify dan allow-transfer untuk Valmar, sementara server slave dikonfigurasi untuk menarik zona dari master. Semua host non-router dikonfigurasi untuk menggunakan DNS server internal sebagai prioritas utama, dengan fallback ke DNS eksternal.
 
 
 **Tirion**
@@ -193,6 +193,7 @@ apt install bind9 -y
 ln -s /etc/init.d/named /etc/init.d/bind9
 ```
 
+![alt image](assets/soal4/image1.png)
 
 ```sh
 cat <<EOF > /etc/bind/named.conf.options
@@ -211,6 +212,7 @@ options {
 
 EOF
 ```
+![alt image](assets/soal4/image2.png)
 
 
 ```sh
@@ -233,7 +235,7 @@ ns2     IN       A      192.233.3.4
 
 EOF
 ```
-
+![alt image](assets/soal4/image3.png)
 
 ```sh
 cat <<EOF > /etc/bind/named.conf.local
@@ -246,23 +248,23 @@ zone "k44.com" {
 
 EOF
 ```
-
+![alt image](assets/soal4/image4.png)
 
 ```sh
 service bind9 restart
 ```
-
+![alt image](assets/soal4/image5.png)
 
 ```sh
 echo "nameserver 192.233.3.3" > /etc/resolv.conf
 echo "nameserver 192.233.3.4" >> /etc/resolv.conf
 echo "nameserver 192.168.122.1" >> /etc/resolv.conf
 ```
-
+![alt image](assets/soal4/image6.png)
 ```
 dig @localhost k44.com
 ```
-
+![alt image](assets/soal4/image7.png)
 
 **Valmar**
 
@@ -271,7 +273,7 @@ apt update
 apt install bind9 -y
 ln -s /etc/init.d/named /etc/init.d/bind9
 ```
-
+![alt image](assets/soal4/image8.png)
 ```
 cat <<EOF > /etc/bind/named.conf.options
 options {
@@ -289,7 +291,7 @@ options {
 
 EOF
 ```
-
+![alt image](assets/soal4/image9.png)
 ```sh
 mkdir -p /var/lib/bind/k44 && chown bind:bind /var/lib/bind/k44 && cat <<EOF > /etc/bind/named.conf.local
 zone "k44.com" {
@@ -300,12 +302,12 @@ zone "k44.com" {
 
 EOF
 ```
-
+![alt image](assets/soal4/image10.png)
 
 ```sh
 service bind9 restart
 ```
-
+![alt image](assets/soal4/image11.png)
 
 
 
@@ -316,15 +318,15 @@ echo "nameserver 192.233.3.3" > /etc/resolv.conf
 echo "nameserver 192.233.3.4" >> /etc/resolv.conf
 echo "nameserver 192.168.122.1" >> /etc/resolv.conf
 ```
-
+![alt image](assets/soal4/image12.png)
 
 ---
 
 5. "Nama memberi arah," kata Eonwe, menandai dimulainya era identitas yang jelas dan terstruktur di seluruh Beleriand. Setiap tokoh dalam jaringan ini harus memiliki hostname yang unik dan bermakna sesuai dengan glosarium yang telah ditetapkan: eonwe, earendil, elwing, cirdan, elrond, maglor, sirion, tirion, valmar, lindon, dan vingilot. Implementasi hostname ini memungkinkan setiap host untuk dikenali dan diakses dengan mudah melalui nama yang bermakna, bukan hanya alamat IP numerik yang sulit diingat. Selain itu, setiap node harus memiliki domain yang sesuai dengan namanya (contoh: eru.\<xxxx>.com) dan alamat IP yang telah ditetapkan sebelumnya. Pengecualian khusus dilakukan untuk node yang bertanggung jawab atas ns1 dan ns2, mengingat peran penting mereka dalam infrastruktur DNS yang telah dibangun.
 
+---
 **Penjelasan:** Kami menambahkan A records untuk semua host dalam jaringan ke zona DNS k44.com. Setiap host memiliki record A yang memetakan hostname ke alamat IP-nya masing-masing. Ini memungkinkan resolusi nama domain yang mudah diingat untuk setiap host dalam jaringan, menggantikan penggunaan alamat IP numerik yang sulit diingat.
 
----
 
 
 ```sh
@@ -340,20 +342,21 @@ vingilot       IN       A      192.233.3.6
 
 EOF
 ```
-
+![alt image](assets/soal5/image.png)
 
 ```sh
 service bind9 restart
 ```
 
+![alt image](assets/soal5/image2.png)
 
 ---
 
 6. Lonceng Valmar berdentang mengikuti irama Tirion, menandai dimulainya era sinkronisasi DNS yang harmonis dan terpercaya di seluruh Beleriand. Proses zone transfer yang efektif memastikan bahwa Valmar (ns2) sebagai server slave dapat menerima salinan zona terbaru dari Tirion (ns1) sebagai server master secara otomatis dan real-time. Sinkronisasi ini sangat penting untuk memastikan konsistensi data DNS di seluruh jaringan, sehingga setiap perubahan yang dilakukan di server master akan segera direfleksikan di server slave. Nilai serial SOA di kedua server harus selalu sama, menandakan bahwa transfer telah berhasil dan tidak ada data yang tertinggal atau tidak sinkron.
 
+---
 **Penjelasan:** Kami memverifikasi bahwa zone transfer antara server master (Tirion) dan server slave (Valmar) berfungsi dengan baik. Dengan menggunakan perintah dig untuk memeriksa SOA record dari kedua server, kami memastikan bahwa nilai serial SOA sama, yang menandakan bahwa sinkronisasi DNS berhasil dilakukan dan data di kedua server konsisten.
 
----
 
 
 **Tirion**
@@ -361,21 +364,23 @@ service bind9 restart
 ```sh
 dig @192.233.3.3 k44.com SOA +short
 ```
+![alt image](assets/soal6/image.png)
 
 **Valmar**
 
 ```sh
 dig @192.233.3.4 k44.com SOA +short
 ```
+![alt image](assets/soal6/image2.png)
 
 
 ---
 
 7. Peta kota dan pelabuhan dilukis dengan cermat, menandai dimulainya era infrastruktur web yang terintegrasi dan fungsional di seluruh Beleriand. Sirion berperan sebagai gerbang utama (front door) yang akan menerima semua permintaan masuk, sementara Lindon dikonfigurasi sebagai server web statis yang akan melayani konten statis seperti file HTML, CSS, dan gambar. Vingilot, di sisi lain, berfungsi sebagai server web dinamis yang dapat mengeksekusi skrip PHP dan aplikasi web yang kompleks. Pada zona <xxxx>.com, ditambahkan A records untuk sirion.<xxxx>.com (IP Sirion), lindon.<xxxx>.com (IP Lindon), dan vingilot.<xxxx>.com (IP Vingilot) untuk memastikan resolusi yang tepat. Selain itu, ditetapkan CNAME records yang strategis: www.<xxxx>.com → sirion.<xxxx>.com untuk akses utama, static.<xxxx>.com → lindon.<xxxx>.com untuk konten statis, dan app.<xxxx>.com → vingilot.<xxxx>.com untuk aplikasi dinamis. Verifikasi dilakukan dari dua klien berbeda untuk memastikan bahwa seluruh hostname tersebut ter-resolve ke tujuan yang benar dan konsisten di seluruh jaringan.
 
+---
 **Penjelasan:** Kami menambahkan CNAME records untuk membangun infrastruktur web yang terintegrasi. Record www.k44.com mengarah ke sirion.k44.com sebagai front door utama, static.k44.com mengarah ke lindon.k44.com untuk konten statis, dan app.k44.com mengarah ke vingilot.k44.com untuk aplikasi dinamis. Konfigurasi ini memungkinkan akses yang mudah dan terorganisir ke berbagai layanan web melalui hostname yang bermakna.
 
----
 
 
 ```sh
@@ -386,20 +391,21 @@ app       IN       CNAME      elrond.k44.com.
 
 EOF
 ```
-
+![alt image](assets/soal7/image.png)
 
 ```sh
 service bind9 restart
 ```
+![alt image](assets/soal7/image-1.png)
 
 
 ---
 
 8. Setiap jejak harus bisa diikuti, menandai dimulainya era reverse DNS yang komprehensif dan terstruktur di seluruh Beleriand. Di Tirion (ns1), dideklarasikan satu reverse zone khusus untuk segmen DMZ tempat Sirion, Lindon, dan Vingilot berada, memungkinkan pencarian balik dari alamat IP ke hostname yang sesuai. Di Valmar (ns2), reverse zone tersebut ditarik sebagai slave untuk memastikan redundansi dan ketersediaan yang tinggi. PTR records diisi untuk ketiga hostname tersebut agar pencarian balik IP address dapat mengembalikan hostname yang benar dan akurat. Implementasi ini memastikan bahwa query reverse untuk alamat Sirion, Lindon, dan Vingilot dijawab secara authoritative, memberikan kemampuan pelacakan dan identifikasi yang lengkap untuk setiap perangkat dalam jaringan.
 
+---
 **Penjelasan:** Kami mengkonfigurasi reverse DNS zone untuk segmen DMZ (192.233.3.0/24) dengan membuat zone 3.233.192.in-addr.arpa di Tirion sebagai master dan Valmar sebagai slave. PTR records dikonfigurasi untuk memetakan alamat IP ke hostname yang sesuai, memungkinkan pencarian balik dari IP address ke hostname. Ini memastikan bahwa setiap host dalam segmen DMZ dapat diidentifikasi melalui IP address-nya.
 
----
 
 
 #### **Konfigurasi di Tirion (Master)**
@@ -415,6 +421,7 @@ zone "3.233.192.in-addr.arpa" {
 };
 EOF
 ```
+![alt image](assets/soal8/image.png)
 
 Selanjutnya, kami membuat file *zone*-nya dan mengisinya dengan *record* `PTR` untuk Sirion (`192.233.3.2`), Lindon (`192.233.3.5`), dan Vingilot (`192.233.3.6`).
 
@@ -436,6 +443,7 @@ cat <<EOF > /etc/bind/k44/3.233.192.in-addr.arpa
 6       IN       PTR    vingilot.k44.com.
 EOF
 ```
+![alt image](assets/soal8/image-1.png)
 
 #### **Konfigurasi di Valmar (Slave)**
 
@@ -460,6 +468,7 @@ host -t ptr 192.233.3.2
 host -t ptr 192.233.3.5
 host -t ptr 192.233.3.6
 ```
+![alt image](assets/soal8/image-3-verifikasi.png)
 Hasil verifikasi menunjukkan bahwa setiap alamat IP berhasil dipetakan kembali ke *hostname* yang sesuai, menandakan konfigurasi *Reverse DNS* telah berhasil.
 
 
@@ -469,16 +478,9 @@ Hasil verifikasi menunjukkan bahwa setiap alamat IP berhasil dipetakan kembali k
 
 9. Lampion Lindon dinyalakan, menandai dimulainya era layanan web statis yang terstruktur dan mudah diakses di seluruh Beleriand. Implementasi web server statis pada hostname static.\<xxxx>.com memungkinkan pengguna untuk mengakses konten web dengan mudah melalui nama domain yang bermakna, bukan hanya alamat IP numerik yang sulit diingat. Folder arsip /annals/ dikonfigurasi dengan fitur autoindex (directory listing) yang memungkinkan pengguna untuk menelusuri isi direktori secara interaktif dan intuitif, seolah-olah mereka sedang menjelajahi sistem file lokal. Akses ke layanan ini harus dilakukan melalui hostname untuk memastikan konsistensi dan kemudahan penggunaan di seluruh jaringan.
 
+---
 **Penjelasan:** Kami mengkonfigurasi Lindon sebagai web server statis menggunakan Apache2. Server dikonfigurasi untuk menyajikan konten dari direktori /var/www/annals/ dengan fitur autoindex yang memungkinkan directory listing. Konfigurasi virtual host memastikan bahwa server dapat diakses melalui hostname static.k44.com dan menampilkan daftar file dalam direktori secara otomatis.
 
----
-
-
-Tentu, mari kita lanjutkan ke soal 9. Berikut adalah format laporan untuk `README.md` di GitHub, lengkap dengan penjelasan validasinya.
-
---
-
-### 9\. Lampion Lindon Dinyalakan (Web Server Statis)
 
 Pada soal ini, kami bertugas untuk mengaktifkan **Lindon** sebagai *web server* statis. Sesuai permintaan, *server* ini harus menyajikan konten dari direktori `/annals/` dengan fitur *autoindex* (daftar file) aktif. Akses ke *server* ini dilakukan melalui *hostname* `static.k44.com`.
 
@@ -490,12 +492,14 @@ Langkah pertama adalah menginstal **Apache2**, yang merupakan perangkat lunak *w
 apt update
 apt install apache2 -y
 ```
-
+![alt image](assets/soal9/image.png)
 Selanjutnya, kami membuat direktori `/var/www/annals/` yang akan menjadi *root* atau direktori utama untuk konten web.
 
 ```sh
 mkdir -p /var/www/annals/
 ```
+![alt image](assets/soal9/image-1.png)
+
 
 Kemudian, kami membuat file konfigurasi *Virtual Host* baru untuk Apache. Konfigurasi ini mengarahkan semua permintaan ke `DocumentRoot` `/var/www/annals` dan yang terpenting, mengaktifkan `Options +Indexes` untuk mengizinkan *directory listing*.
 
@@ -515,13 +519,16 @@ cat <<EOF > /etc/apache2/sites-available/000-default.conf
 </VirtualHost>
 EOF
 ```
+![alt image](assets/soal9/image-2.png)
 
 Terakhir, kami me-restart layanan Apache2 untuk menerapkan semua perubahan konfigurasi.
 
 ```sh
 service apache2 restart
 ```
+![alt image](assets/soal9/image-3.png)
 
+--
 #### **Validasi**
 
 Untuk membuktikan bahwa *web server* di Lindon berjalan dengan benar, kami melakukan validasi dari salah satu klien, yaitu **Earendil**.
@@ -532,6 +539,7 @@ Kami menggunakan perintah `curl` untuk mengakses *hostname* `static.k44.com` dar
 ```sh
 curl static.k44.com
 ```
+![alt image](assets/soal9/image-4.png)
 
 **Hasil yang Diharapkan:**
 Jika konfigurasi berhasil, perintah `curl` akan mengembalikan output berupa kode HTML. Output ini adalah halaman yang secara otomatis dibuat oleh Apache karena fitur `autoindex` aktif. Halaman ini akan berisi judul **"Index of /"**, yang menandakan bahwa *web server* berhasil menyajikan daftar isi dari direktori `/var/www/annals/`.
@@ -558,6 +566,7 @@ Langkah pertama adalah menginstal paket-paket yang diperlukan, yaitu Apache2, PH
 ```sh
 apt install apache2 php php8.4-fpm libapache2-mod-fcgid -y
 ```
+![alt image](assets/soal10/image.png)
 
 Selanjutnya, kami mengkonfigurasi *Virtual Host* Apache untuk meneruskan permintaan file `.php` ke *service* PHP-FPM melalui *socket*.
 
@@ -575,6 +584,8 @@ cat <<EOF > /etc/apache2/sites-available/000-default.conf
 </VirtualHost>
 EOF
 ```
+![alt image](assets/soal10/image-1.png)
+
 
 Untuk mengaktifkan URL *rewrite* (misalnya `/about` menjadi `about.php`), kami membuat file `.htaccess` di direktori web.
 
@@ -584,7 +595,7 @@ RewriteEngine On
 RewriteRule ^about$ about.php [L]
 EOF
 ```
-
+![alt image](assets/soal10/image-2.png)
 Kami juga membuat dua file PHP sederhana, `index.php` dan `about.php`, sebagai konten untuk validasi. Terakhir, kami mengaktifkan modul Apache yang diperlukan dan me-restart layanan PHP-FPM serta Apache2.
 
 --
@@ -593,14 +604,12 @@ Kami juga membuat dua file PHP sederhana, `index.php` dan `about.php`, sebagai k
 
 Untuk membuktikan bahwa *web server* dinamis di Vingilot berfungsi dengan benar, kami melakukan validasi dari klien **Earendil** menggunakan `curl`.
 
-**Cara Validasi:**
 
 1.  **Mengakses Halaman Utama:** Perintah ini untuk memverifikasi eksekusi PHP dasar.
 
     ```sh
     curl http://app.k44.com/
     ```
-
     **Hasil:** Server berhasil merespons dengan output dari `index.php`, yaitu `Hello Vingilot`.
 
 
@@ -609,9 +618,8 @@ Untuk membuktikan bahwa *web server* dinamis di Vingilot berfungsi dengan benar,
     ```sh
     curl http://app.k44.com/about
     ```
-
     **Hasil:** Server berhasil merespons dengan output dari `about.php`, yaitu `About Vingilot`.
-
+        ![alt image](assets/soal10/image_soal_10-3.png)
 
 
 ---
@@ -635,7 +643,7 @@ Langkah pertama adalah menginstal **Nginx**, perangkat lunak yang akan kami guna
 apt update
 apt install nginx -y
 ```
-
+![alt image](assets/soal11/image.png)
 Selanjutnya, kami membuat file konfigurasi *server block* utama untuk Nginx. Konfigurasi ini melakukan beberapa hal penting:
 
   * **`listen 80`**: Mendengarkan permintaan masuk pada port 80.
@@ -672,6 +680,7 @@ server {
 }
 EOF
 ```
+![alt image](assets/soal11/image-1.png)
 
 Terakhir, kami me-restart layanan Nginx untuk menerapkan konfigurasi baru.
 
@@ -679,13 +688,10 @@ Terakhir, kami me-restart layanan Nginx untuk menerapkan konfigurasi baru.
 service nginx restart
 ```
 
---
 
 #### **Validasi**
 
 Untuk membuktikan bahwa *reverse proxy* berfungsi dengan benar, kami melakukan validasi dari klien **Earendil** dengan `curl`. Kami menguji kedua *path* untuk memastikan permintaan diteruskan ke *backend* yang benar.
-
-**Cara Validasi:**
 
 1.  **Mengakses Path Statis (`/static/`):**
     Kami mengirim permintaan ke `www.k44.com/static/`. Sirion seharusnya meneruskan ini ke Lindon.
@@ -727,12 +733,14 @@ Langkah pertama adalah menginstal paket `apache2-utils`, yang berisi utilitas `h
 ```sh
 apt install apache2-utils -y
 ```
+![alt image](assets/soal12/image_soal12.png)
 
 Selanjutnya, kami menggunakan `htpasswd` untuk membuat file kata sandi di `/etc/nginx/.htpasswd`. Perintah ini membuat pengguna baru bernama `sirion` dengan kata sandi `sirion123`.
 
 ```sh
 htpasswd -cb /etc/nginx/.htpasswd sirion sirion123
 ```
+![alt image](assets/soal12/image_soal_12_2.png)
 
 Kemudian, kami memperbarui file konfigurasi Nginx di Sirion dengan menambahkan *location block* baru untuk `^~ /admin/`. Blok ini berisi dua arahan penting:
 
@@ -759,6 +767,8 @@ server {
 EOF
 ```
 
+![alt image](assets/soal12/image_soal_12_3.png)
+
 Kami juga membuat direktori dan file `index.html` sederhana yang akan disajikan setelah otentikasi berhasil.
 
 ```sh
@@ -766,12 +776,13 @@ mkdir -p /var/www/admin
 echo "Sirion Admin GG" > /var/www/admin/index.html
 ```
 
+![alt image](assets/soal12/image_soal_12_4.png)
 Terakhir, kami me-restart layanan Nginx untuk menerapkan perubahan.
 
 ```sh
 service nginx restart
 ```
-
+![alt image](assets/soal12/image_soal12_5.png)
 --
 
 #### **Validasi**
@@ -786,6 +797,8 @@ Untuk membuktikan bahwa *Basic Authentication* berfungsi, kami melakukan dua ske
     ```sh
     curl -I http://www.k44.com/admin/
     ```
+   
+
 
     (Opsi `-I` digunakan untuk hanya melihat *header* respons dari server).
     **Hasil yang Diharapkan:** Server harus merespons dengan kode status `401 Unauthorized`. Ini membuktikan bahwa direktori tersebut memang dilindungi dan akses ditolak.
@@ -798,16 +811,17 @@ Untuk membuktikan bahwa *Basic Authentication* berfungsi, kami melakukan dua ske
     ```
 
     **Hasil yang Diharapkan:** Server berhasil mengotentikasi pengguna dan menyajikan konten dari file `index.html`, yaitu `Sirion Admin GG`. Ini membuktikan bahwa pengguna dengan kredensial yang benar dapat mengakses area yang dilindungi.
+     ![alt image](assets/soal12/image_soal_12_5.png)
 
 
 
 ---
 
 13. "Panggil aku dengan nama," ujar Sirion kepada mereka yang datang hanya menyebut angka, menandai dimulainya era kanonikalisasi URL yang konsisten dan profesional di seluruh Beleriand. Implementasi kanonikalisasi endpoint memastikan bahwa semua akses ke layanan web dilakukan melalui hostname yang standar dan mudah diingat, bukan melalui alamat IP numerik yang sulit diingat dan tidak user-friendly. Setiap permintaan yang masuk melalui IP address Sirion maupun sirion.<xxxx>.com akan secara otomatis diarahkan (redirect 301) ke www.<xxxx>.com sebagai hostname kanonik yang telah ditetapkan. Proses ini memastikan konsistensi branding, meningkatkan SEO, dan memberikan pengalaman pengguna yang lebih baik dengan URL yang bersih dan profesional.
+---
 
 **Penjelasan:** Kami mengimplementasikan URL canonicalization di Sirion menggunakan Nginx. Setiap permintaan yang masuk melalui IP address Sirion (192.233.3.2) akan secara otomatis diarahkan dengan redirect 301 ke www.k44.com. Ini memastikan bahwa semua akses ke layanan web dilakukan melalui hostname kanonik yang konsisten, meningkatkan SEO dan memberikan pengalaman pengguna yang lebih baik dengan URL yang bersih dan profesional.
 
----
 
 
 Pada soal ini, kami menerapkan **kanonikalisasi**, sebuah proses untuk memastikan bahwa sebuah situs web hanya dapat diakses melalui satu alamat utama atau "kanonik". Tujuannya adalah untuk menghindari duplikasi konten di mata mesin pencari dan memberikan pengalaman yang konsisten kepada pengguna.
