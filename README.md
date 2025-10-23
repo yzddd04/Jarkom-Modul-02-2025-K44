@@ -867,6 +867,7 @@ Kami mengirim permintaan langsung ke alamat IP Sirion dan memeriksa apakah serve
 ```sh
 curl -I http://192.233.3.2/
 ```
+![alt image](image.png)
 
 **Hasil yang Diharapkan:**
 Jika konfigurasi berhasil, server tidak akan menampilkan konten halaman. Sebaliknya, ia akan mengirimkan *header* respons yang berisi:
@@ -879,12 +880,11 @@ Jika konfigurasi berhasil, server tidak akan menampilkan konten halaman. Sebalik
 ---
 
 14. Di Vingilot, catatan kedatangan harus jujur, menandai dimulainya era logging yang transparan dan akurat di seluruh Beleriand. Implementasi access log yang jujur memastikan bahwa setiap kunjungan dan aktivitas pengguna tercatat dengan benar, menggunakan IP address klien asli yang sebenarnya, bukan IP address dari reverse proxy (Sirion). Hal ini sangat penting untuk analisis keamanan, monitoring, dan audit trail yang akurat, memungkinkan administrator untuk melacak aktivitas pengguna yang sebenarnya dan mengidentifikasi pola-pola akses yang mencurigakan. Proses ini memastikan bahwa access log aplikasi di Vingilot mencatat IP address klien asli saat lalu lintas melewati Sirion, memberikan gambaran yang jelas dan transparan tentang siapa yang mengakses layanan dan kapan mereka melakukannya.
+---
 
 **Penjelasan:** Kami mengkonfigurasi Vingilot untuk mencatat IP address klien asli dalam access log menggunakan modul remoteip Apache. Konfigurasi RemoteIPHeader dan RemoteIPTrustedProxy memastikan bahwa Apache menggunakan IP address dari header X-Real-IP yang diteruskan oleh reverse proxy Sirion, bukan IP address Sirion itu sendiri. Ini memungkinkan logging yang akurat untuk analisis keamanan dan monitoring.
 
----
 
---
 
 #### **Konfigurasi di Vingilot**
 
@@ -917,7 +917,6 @@ cat <<EOF > /etc/apache2/sites-available/000-default.conf
 </VirtualHost>
 EOF
 ```
-
 Terakhir, kami me-restart layanan Apache2 untuk menerapkan perubahan.
 
 ```sh
@@ -938,6 +937,7 @@ Untuk membuktikan bahwa Vingilot sekarang mencatat IP klien yang benar, kami mel
     ```sh
     curl http://www.k44.com/app/
     ```
+    ![alt image](assets/soal14/image-1.png)
 
 
 2.  **Periksa Log di Vingilot:** Segera setelah permintaan dikirim, kami membuka terminal **Vingilot** dan memeriksa baris terakhir dari file `access.log` Apache.
@@ -945,6 +945,9 @@ Untuk membuktikan bahwa Vingilot sekarang mencatat IP klien yang benar, kami mel
     ```sh
     tail -n 1 /var/log/apache2/access.log
     ```
+    ![alt image](assets/soal14/image-soal14-2.png)
+
+**Hasil yang Diharapkan:**
 
 
 Dengan munculnya alamat IP `192.233.1.2` di dalam log Vingilot, kami berhasil memvalidasi bahwa server *backend* kini memiliki catatan yang "jujur" mengenai siapa yang mengaksesnya.
@@ -987,6 +990,7 @@ Kami menjalankan dua perintah `ab` secara terpisah, satu untuk setiap *endpoint*
     ```sh
     ab -n 500 -c 10 http://www.k44.com/app/
     ```
+    ![alt image](235135.png)
 
 
 2.  **Uji Beban pada Layanan Statis (`/static/`):**
@@ -995,6 +999,8 @@ Kami menjalankan dua perintah `ab` secara terpisah, satu untuk setiap *endpoint*
     ```sh
     ab -n 500 -c 10 http://www.k44.com/static/
     ```
+    ![alt image](no16.png)
+
 
 **Hasil yang Diharapkan:**
 Setelah setiap perintah selesai, ApacheBench akan mencetak laporan statistik. Metrik utama yang kami perhatikan adalah:
@@ -1008,7 +1014,7 @@ Setelah setiap perintah selesai, ApacheBench akan mencetak laporan statistik. Me
 Berikut adalah rangkuman hasil dari pengujian yang kami lakukan. Kedua layanan berhasil menangani semua permintaan tanpa ada yang gagal.
 
 | Metrik | Layanan Dinamis (`/app/`) | Layanan Statis (`/static/`) |
-| : | : | : |
+| -------- | ---- | ---------- |
 | Total Permintaan | 500 | 500 |
 | Permintaan Gagal | 0 | 0 |
 | **Requests per second** | **3870.42** [\#/detik] | **4023.63** [\#/detik] |
@@ -1021,9 +1027,10 @@ Hasil pengujian ini memvalidasi bahwa kedua layanan mampu menangani beban yang d
 
 16. Badai mengubah garis pantai, menandai dimulainya era perubahan infrastruktur yang dinamis dan responsif di seluruh Beleriand. Perubahan A record lindon.<xxxx>.com ke alamat baru (dengan mengubah IP paling belakangnya saja agar mudah) memerlukan koordinasi yang cermat antara server master dan slave. SOA serial di Tirion (ns1) harus dinaikkan untuk menandakan adanya perubahan, dan Valmar (ns2) harus tersinkron untuk memastikan konsistensi data di seluruh jaringan. Karena static.<xxxx>.com adalah CNAME yang menunjuk ke lindon.<xxxx>.com, seluruh akses ke static.<xxxx>.com akan mengikuti alamat baru secara otomatis. TTL (Time To Live) ditetapkan sebesar 30 detik untuk record yang relevan, memungkinkan perubahan yang cepat dan efisien. Verifikasi dilakukan pada tiga momen kritis: sebelum perubahan (mengembalikan alamat lama), sesaat setelah perubahan namun sebelum TTL kedaluwarsa (masih alamat lama karena cache), dan setelah TTL kedaluwarsa (beralih ke alamat baru), memberikan gambaran lengkap tentang proses perubahan DNS yang terjadi.
 
-**Penjelasan:** Kami melakukan perubahan A record untuk lindon.k44.com dari 192.233.3.5 ke 192.233.3.7 dengan TTL 30 detik. Serial SOA dinaikkan untuk menandakan perubahan, dan server slave akan melakukan zone transfer otomatis. Karena static.k44.com adalah CNAME yang menunjuk ke lindon.k44.com, perubahan ini akan mempengaruhi resolusi static.k44.com secara otomatis. TTL yang pendek memungkinkan perubahan yang cepat dan efisien.
 
 ---
+**Penjelasan:** Kami melakukan perubahan A record untuk lindon.k44.com dari 192.233.3.5 ke 192.233.3.7 dengan TTL 30 detik. Serial SOA dinaikkan untuk menandakan perubahan, dan server slave akan melakukan zone transfer otomatis. Karena static.k44.com adalah CNAME yang menunjuk ke lindon.k44.com, perubahan ini akan mempengaruhi resolusi static.k44.com secara otomatis. TTL yang pendek memungkinkan perubahan yang cepat dan efisien.
+
 
 
 #### **Konfigurasi di Tirion (Master)**
@@ -1142,7 +1149,6 @@ Untuk membuktikan bahwa konfigurasi *auto-start* berhasil, kami melakukan metode
     root@Tirion:~# service bind9 status
     bind is not running ... failed!
     ```
-
 3.  **Investigasi Masalah:** Kami melakukan investigasi untuk mencari penyebab kegagalan.
 
       * `named-checkconf` tidak menunjukkan adanya kesalahan sintaks.
@@ -1164,6 +1170,9 @@ Untuk membuktikan bahwa konfigurasi *auto-start* berhasil, kami melakukan metode
     root@Tirion:~# service bind9 status
     bind is running.
     ```
+    
+    ![alt image](assets/soal17/image-1.png)
+
 
     Keberhasilan ini membuktikan bahwa masalahnya memang terletak pada izin akses. Dengan perbaikan ini, kami dapat memastikan layanan BIND9 kini akan dapat dimulai secara otomatis pada proses *booting* berikutnya. Proses validasi yang sama dapat diaplikasikan untuk semua layanan lain yang telah dikonfigurasi.
 
@@ -1172,9 +1181,9 @@ Untuk membuktikan bahwa konfigurasi *auto-start* berhasil, kami melakukan metode
 
 18. Sang musuh memiliki banyak nama, menandai dimulainya era identitas yang kompleks dan multi-layered di seluruh Beleriand. Implementasi record TXT untuk melkor.<xxxx>.com yang berisi "Morgoth (Melkor)" memungkinkan penyimpanan informasi tekstual yang dapat digunakan untuk berbagai keperluan, seperti verifikasi domain, informasi kontak, atau metadata lainnya. Selain itu, penambahan morgoth.<xxxx>.com sebagai CNAME yang menunjuk ke melkor.<xxxx>.com menciptakan sistem alias yang memungkinkan satu entitas untuk diakses melalui multiple nama domain. Verifikasi query TXT terhadap melkor memastikan bahwa informasi tekstual dapat diakses dengan benar, sementara query ke morgoth mengikuti aliasnya menciptakan fleksibilitas akses yang tinggi dan kemudahan penggunaan yang optimal.
 
+---
 **Penjelasan:** Kami menambahkan record TXT untuk melkor.k44.com yang berisi "Morgoth (Melkor)" dan record CNAME untuk morgoth.k44.com yang menunjuk ke melkor.k44.com. Ini menciptakan sistem alias yang memungkinkan akses ke entitas yang sama melalui multiple nama domain. Record TXT dapat digunakan untuk berbagai keperluan seperti verifikasi domain atau metadata, sementara CNAME memungkinkan fleksibilitas akses yang tinggi.
 
----
 
 --
 
@@ -1194,6 +1203,8 @@ melkor       IN       TXT      "Morgoth (Melkor)"
 morgoth      IN       CNAME    melkor.k44.com.
 EOF
 ```
+![alt image](assets/soal18/image_soal18.png)
+
 
 Setelah file disimpan, kami menaikkan nomor serial SOA dan me-restart layanan `bind9` untuk menerapkan perubahan tersebut.
 
@@ -1215,6 +1226,8 @@ Untuk membuktikan bahwa kedua *record* tersebut berfungsi sesuai harapan, kami m
     ```sh
     dig melkor.k44.com TXT
     ```
+    ![alt image](assets/soal18/image_soal18_2.png)
+
 
     **Hasil yang Diharapkan:** *Output* pada `ANSWER SECTION` harus menunjukkan `TXT` record dengan isi "Morgoth (Melkor)".
 
@@ -1226,6 +1239,9 @@ Untuk membuktikan bahwa kedua *record* tersebut berfungsi sesuai harapan, kami m
     ```sh
     dig morgoth.k44.com TXT
     ```
+    ![alt image](assets/soal18/image_soal18_3.png)
+
+
 
     **Hasil yang Diharapkan:** *Output* pada `ANSWER SECTION` akan menampilkan dua hal: pertama, bahwa `morgoth.k44.com` adalah `CNAME` untuk `melkor.k44.com`, dan kedua, `TXT` record dari `melkor.k44.com` itu sendiri.
 
@@ -1233,9 +1249,9 @@ Untuk membuktikan bahwa kedua *record* tersebut berfungsi sesuai harapan, kami m
 
 19. Pelabuhan diperluas bagi para pelaut, menandai dimulainya era aksesibilitas yang lebih luas dan fleksibilitas routing yang tinggi di seluruh Beleriand. Implementasi havens.<xxxx>.com sebagai CNAME yang menunjuk ke www.<xxxx>.com menciptakan alternatif akses yang memungkinkan pengguna untuk mengakses layanan melalui nama domain yang berbeda namun tetap mengarah ke tujuan yang sama. Hal ini sangat berguna untuk branding, marketing, atau kemudahan akses yang lebih baik. Akses layanan melalui hostname tersebut dari dua klien berbeda memastikan bahwa resolusi DNS berfungsi dengan benar dan rute aplikasi dapat diakses melalui multiple entry point. Verifikasi ini memberikan jaminan bahwa sistem dapat menangani berbagai cara akses yang berbeda tanpa mengalami masalah routing atau resolusi yang dapat mengganggu pengalaman pengguna.
 
+---
 **Penjelasan:** Kami menambahkan record CNAME untuk havens.k44.com yang menunjuk ke www.k44.com. Ini menciptakan alternatif akses yang memungkinkan pengguna untuk mengakses layanan melalui nama domain yang berbeda namun tetap mengarah ke tujuan yang sama. Konfigurasi ini berguna untuk branding, marketing, atau kemudahan akses yang lebih baik, dan memastikan bahwa sistem dapat menangani berbagai cara akses yang berbeda.
 
----
 
 --
 
@@ -1254,8 +1270,9 @@ Setelah file disimpan, kami menaikkan nomor serial SOA dan me-restart layanan `b
 ```sh
 service bind9 restart
 ```
+![alt image](assets/soal19/image_soal19_3.png)
 
---
+
 
 #### **Validasi**
 
@@ -1269,12 +1286,16 @@ Kami menggunakan `curl` dari kedua klien untuk mengakses salah satu layanan (mis
     ```sh
     curl http://havens.k44.com/app/
     ```
+    ![alt image](assets/soal19/image_soal19-1.png)
 
   * **Dari Cirdan:**
 
     ```sh
     curl http://havens.k44.com/app/
     ```
+    ![alt image](assets/soal19/image_soal19-2.png)
+
+
 
 **Hasil yang Diharapkan:**
 Jika konfigurasi berhasil, kedua perintah `curl` tersebut harus mengembalikan output `Hello Vingilot`.
@@ -1308,6 +1329,7 @@ cat <<EOF > /var/www/html/index.html
 <a href="http://www.k44.com/static">Static</a>
 EOF
 ```
+![alt image](assets/soal20/image_soa20_1.png)
 
 Karena Nginx di Sirion sudah dikonfigurasi pada soal sebelumnya untuk menyajikan file dari direktori `/var/www/html/` untuk *path root* (`/`), tidak ada perubahan konfigurasi Nginx tambahan yang diperlukan untuk soal ini.
 
@@ -1317,16 +1339,17 @@ Karena Nginx di Sirion sudah dikonfigurasi pada soal sebelumnya untuk menyajikan
 
 Untuk membuktikan bahwa halaman depan ini berfungsi dan tautan di dalamnya mengarah ke tujuan yang benar, kami melakukan validasi dari klien **Earendil** menggunakan `curl`.
 
-**Cara Validasi:**
 
 **Mengakses Halaman Depan:**
     Pertama, kami mengakses nama domain kanonik `www.k44.com` tanpa *path* tambahan.
 
-    ```sh
-    curl http://www.k44.com/
-    ```
+```
+curl http://www.k44.com/
+```
 
-    **Hasil yang Diharapkan:** *Output*-nya harus berupa kode HTML dari file `index.html` yang telah kami buat, yang berisi judul dan kedua tautan.
+![alt text](image-1.png)
+
+Hasil yang Diharapkan:** *Output*-nya harus berupa kode HTML dari file `index.html` yang telah kami buat, yang berisi judul dan kedua tautan.
 
 
 Keberhasilan `curl` dalam mengambil konten halaman depan memvalidasi bahwa *reverse proxy* Sirion berhasil menyajikan konten lokalnya sendiri dan siap untuk mengarahkan pengguna ke layanan *backend* yang sesuai melalui tautan yang disediakan.
