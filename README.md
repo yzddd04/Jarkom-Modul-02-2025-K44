@@ -1272,8 +1272,6 @@ service bind9 restart
 
 Untuk membuktikan bahwa alias baru ini berfungsi dan semua permintaan dirutekan dengan benar melalui *reverse proxy*, kami melakukan verifikasi dari dua klien yang berbeda, yaitu **Earendil** dan **Cirdan**.
 
-**Cara Validasi:**
-Kami menggunakan `curl` dari kedua klien untuk mengakses salah satu layanan (misalnya `/app/`) menggunakan *hostname* `havens.k44.com` yang baru.
 
   * **Dari Earendil:**
 
