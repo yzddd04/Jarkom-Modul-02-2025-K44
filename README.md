@@ -11,10 +11,11 @@ Tiara Fatimah Azzahra |	5027241090
 
 1. Di tepi Beleriand yang porak-poranda, Eonwe merentangkan tiga jalur strategis untuk memfasilitasi komunikasi dan distribusi sumber daya di seluruh wilayah yang telah hancur akibat perang. Jalur Barat diperuntukkan bagi Earendil dan Elwing sebagai penghuni utama wilayah tersebut, sementara jalur Timur melayani Círdan, Elrond, dan Maglor yang merupakan pemimpin-pemimpin penting di wilayah timur. Selain itu, dibangun pula pelabuhan DMZ (Demilitarized Zone) yang menjadi pusat administrasi dan keamanan bagi Sirion, Tirion, Valmar, Lindon, dan Vingilot. Setiap tokoh dalam jaringan ini harus memiliki alamat IP yang unik dan default gateway yang tepat agar dapat berkomunikasi secara efektif melalui router Eonwe yang berfungsi sebagai pusat konektivitas utama.
 
-**Penjelasan:** Pada tahap ini, kami membangun topologi jaringan yang terdiri dari tiga segmen utama. Router Eonwe berfungsi sebagai gateway utama dengan tiga interface yang menghubungkan segmen Barat (192.233.1.0/24), Timur (192.233.2.0/24), dan DMZ (192.233.3.0/24). Setiap host dikonfigurasi dengan alamat IP statis sesuai dengan segmennya dan gateway yang mengarah ke Eonwe. Konfigurasi ini memungkinkan komunikasi antar segmen melalui router Eonwe sebagai penghubung utama.
-
 ---
 
+**Penjelasan:** Pada tahap ini, kami membangun topologi jaringan yang terdiri dari tiga segmen utama. Router Eonwe berfungsi sebagai gateway utama dengan tiga interface yang menghubungkan segmen Barat (192.233.1.0/24), Timur (192.233.2.0/24), dan DMZ (192.233.3.0/24). Setiap host dikonfigurasi dengan alamat IP statis sesuai dengan segmennya dan gateway yang mengarah ke Eonwe. Konfigurasi ini memungkinkan komunikasi antar segmen melalui router Eonwe sebagai penghubung utama.
+
+![alt image](assets/soal1/topologi.png)
 
 
 **Eonwe**
@@ -142,10 +143,11 @@ iface eth0 inet static
 ---
 
 2. Angin dari luar mulai berhembus ketika Eonwe membuka jalan ke awan NAT, menandai dimulainya era konektivitas global bagi seluruh penghuni Beleriand. Implementasi Network Address Translation (NAT) ini memungkinkan semua host internal yang berada di belakang router Eonwe untuk mengakses layanan internet eksternal menggunakan alamat IP publik yang dibagikan. Proses ini sangat penting untuk memastikan bahwa setiap host di dalam jaringan privat dapat berkomunikasi dengan dunia luar tanpa memerlukan alamat IP publik yang terpisah untuk setiap perangkat, sehingga menghemat sumber daya alamat IP yang terbatas dan meningkatkan keamanan jaringan internal.
+---
 
 **Penjelasan:** Konfigurasi NAT pada router Eonwe memungkinkan semua host dalam jaringan privat (192.233.0.0/16) untuk mengakses internet melalui interface eth0 yang terhubung ke jaringan eksternal. Dengan menggunakan iptables MASQUERADE, semua traffic dari jaringan internal akan tampak berasal dari IP publik Eonwe saat berkomunikasi dengan internet, sehingga menghemat penggunaan alamat IP publik dan meningkatkan keamanan dengan menyembunyikan struktur jaringan internal.
 
----
+
 
 Isi konfigurasi pada router Eonwe /root/.bashrc
 ```sh
@@ -153,19 +155,23 @@ apt update
 apt install iptables -y
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.233.0.0/16
 ```
+![alt image](assets/soal2/image.png)
 
 ---
 
 3. Kabar dari Barat menyapa Timur, menandai dimulainya era komunikasi lintas wilayah yang harmonis di seluruh Beleriand. Implementasi routing internal yang efektif melalui router Eonwe memungkinkan kelima klien dari berbagai segmen jaringan untuk saling berkomunikasi tanpa hambatan, menciptakan jaringan yang terintegrasi dan efisien. Selain itu, setiap host non-router harus dikonfigurasi dengan resolver DNS eksternal (192.168.122.1) yang akan memungkinkan mereka untuk melakukan resolusi nama domain internet sejak awal aktivasi interface, sehingga memastikan akses penuh ke layanan eksternal dan memfasilitasi komunikasi yang lancar dengan dunia luar.
-
+---
 **Penjelasan:** Router Eonwe telah dikonfigurasi untuk melakukan routing antar segmen jaringan, memungkinkan host dari segmen Barat (192.233.1.0/24) berkomunikasi dengan host dari segmen Timur (192.233.2.0/24) dan DMZ (192.233.3.0/24). Selain itu, semua host non-router dikonfigurasi dengan DNS resolver eksternal (192.168.122.1) untuk memungkinkan resolusi nama domain internet, memastikan akses penuh ke layanan eksternal.
 
----
+
 
 Masukkan resolver 192.168.122.1 ke semua non-router
 ```sh
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 ```
+![alt image](assets/soal3/image.png)
+
+
 Lalu untuk mengecek klien barat menyapa timur dengan ngeping ip 192.233.2.2 pada terminal router timur misal Earendil
 ```sh
 ping 192.233.2.2
