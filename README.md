@@ -458,6 +458,7 @@ zone "3.233.192.in-addr.arpa" {
 };
 EOF
 ```
+![alt text](assets/soal8/image_soal8_konfigurasi.png)
 
 #### **Verifikasi**
 
@@ -521,20 +522,17 @@ EOF
 ```
 ![alt image](assets/soal9/image-2.png)
 
-Terakhir, kami me-restart layanan Apache2 untuk menerapkan semua perubahan konfigurasi.
+restart layanan Apache2 untuk menerapkan konfigurasi.
 
 ```sh
 service apache2 restart
 ```
 ![alt image](assets/soal9/image-3.png)
 
---
 #### **Validasi**
 
 Untuk membuktikan bahwa *web server* di Lindon berjalan dengan benar, kami melakukan validasi dari salah satu klien, yaitu **Earendil**.
 
-**Cara Validasi:**
-Kami menggunakan perintah `curl` untuk mengakses *hostname* `static.k44.com` dari terminal Earendil. `curl` adalah alat baris perintah yang digunakan untuk mentransfer data dengan URL, yang dalam kasus ini akan mengambil konten halaman web.
 
 ```sh
 curl static.k44.com
@@ -1090,9 +1088,10 @@ Meskipun kami tidak mengamati momen transisi dari IP lama ke IP baru, hasil ini 
 
 17. Andaikata bumi bergetar dan semua tertidur sejenak, mereka harus bangkit sendiri, menandai dimulainya era ketahanan sistem dan recovery otomatis yang tangguh di seluruh Beleriand. Implementasi autostart untuk layanan inti memastikan bahwa sistem dapat pulih dengan cepat dan otomatis setelah mengalami gangguan atau reboot yang tidak terduga. Layanan bind9 di ns1/ns2, nginx di Sirion/Lindon, dan PHP-FPM di Vingilot dikonfigurasi untuk memulai secara otomatis saat sistem boot, memastikan ketersediaan layanan yang tinggi dan mengurangi downtime yang tidak perlu. Setelah konfigurasi autostart, verifikasi dilakukan untuk memastikan bahwa layanan kembali menjawab sesuai fungsinya, memberikan jaminan bahwa sistem dapat beroperasi secara normal dan efisien tanpa memerlukan intervensi manual yang berlebihan.
 
-**Penjelasan:** Kami mengkonfigurasi autostart untuk semua layanan inti menggunakan update-rc.d pada setiap server. Layanan bind9 dikonfigurasi untuk autostart di Tirion dan Valmar, nginx di Sirion, apache2 di Lindon, dan apache2 serta php8.4-fpm di Vingilot. Konfigurasi ini memastikan bahwa semua layanan akan berjalan otomatis setelah reboot, mengurangi downtime dan memastikan ketersediaan layanan yang tinggi.
 
 ---
+**Penjelasan:** Kami mengkonfigurasi autostart untuk semua layanan inti menggunakan update-rc.d pada setiap server. Layanan bind9 dikonfigurasi untuk autostart di Tirion dan Valmar, nginx di Sirion, apache2 di Lindon, dan apache2 serta php8.4-fpm di Vingilot. Konfigurasi ini memastikan bahwa semua layanan akan berjalan otomatis setelah reboot, mengurangi downtime dan memastikan ketersediaan layanan yang tinggi.
+
 
 Pada soal ini, kami memastikan bahwa semua layanan inti pada setiap server akan berjalan kembali secara otomatis setelah proses *reboot*. Ini adalah praktik fundamental dalam administrasi sistem untuk menjamin ketersediaan dan ketahanan layanan (*service resiliency*) tanpa memerlukan intervensi manual.
 
